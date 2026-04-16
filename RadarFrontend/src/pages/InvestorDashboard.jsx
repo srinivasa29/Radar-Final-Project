@@ -179,6 +179,112 @@ const InvestorMode = ({ onToggleMode }) => {
         };
     }, []);
 
+<<<<<<< Updated upstream
+=======
+    useEffect(() => {
+        let isMounted = true;
+        const query = searchQuery.trim();
+
+        if (!query) {
+            setSearchResults([]);
+            setIsSearching(false);
+            return undefined;
+        }
+
+        const timer = setTimeout(async () => {
+            try {
+                setIsSearching(true);
+                const response = await fetchMarketData({ search: query });
+                if (isMounted) {
+                    setSearchResults(Array.isArray(response) ? response.slice(0, 8) : []);
+                }
+            } catch (error) {
+                console.error('Search failed:', error);
+                if (isMounted) {
+                    setSearchResults([]);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsSearching(false);
+                }
+            }
+        }, 250);
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timer);
+        };
+    }, [searchQuery]);
+
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (!searchContainerRef.current) {
+                return;
+            }
+
+            if (!searchContainerRef.current.contains(event.target)) {
+                setShowSearchDropdown(false);
+                setHighlightedIndex(-1);
+            }
+        };
+
+        document.addEventListener('mousedown', handleOutsideClick);
+        document.addEventListener('touchstart', handleOutsideClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+            document.removeEventListener('touchstart', handleOutsideClick);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!showSearchDropdown) {
+            setHighlightedIndex(-1);
+            return;
+        }
+
+        const optionsLength = searchQuery.trim().length > 0 ? searchResults.length : trendingSearches.length;
+        if (optionsLength === 0) {
+            setHighlightedIndex(-1);
+            return;
+        }
+
+        if (highlightedIndex >= optionsLength) {
+            setHighlightedIndex(0);
+        }
+    }, [showSearchDropdown, searchQuery, searchResults, trendingSearches, highlightedIndex]);
+
+    const openTraderStockPage = (value) => {
+        const symbol = String(value || '').trim();
+        if (!symbol) {
+            return;
+        }
+        navigate(`/stocks/${encodeURIComponent(symbol.toUpperCase())}`);
+    };
+
+    const handleSearchSelect = async (item) => {
+        const label = item?.symbol || item?.name || '';
+        setSearchQuery(label);
+        setShowSearchDropdown(false);
+        setHighlightedIndex(-1);
+        setActiveModule('WATCHLIST');
+        openTraderStockPage(label);
+
+        if (label) {
+            await logSearchQuery(label);
+        }
+    };
+
+    const handleTrendingSelect = async (term) => {
+        setSearchQuery(term);
+        setShowSearchDropdown(false);
+        setHighlightedIndex(-1);
+        setActiveModule('WATCHLIST');
+        openTraderStockPage(term);
+        await logSearchQuery(term);
+    };
+
+>>>>>>> Stashed changes
     return (
         <div className="dashboard-container investor-theme pt-4">
             <Header 

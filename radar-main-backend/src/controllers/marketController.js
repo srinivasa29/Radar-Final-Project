@@ -78,18 +78,29 @@ const getCryptoBySymbol = async (req, res) => {
     }
 };
 const getTrendingSearches = (req, res) => {
-    const regionalTrending = {
-        IN: ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'BTC', 'USDINR'],
-        US: ['AAPL', 'NVDA', 'BTC', 'TSLA', 'ETH', 'MSFT', 'AMD', 'SOL'],
-        GLOBAL: ['NIFTY', 'AAPL', 'BTC', 'RELIANCE', 'NVDA', 'ETH', 'TCS', 'EURUSD'],
-    };
+    try {
+        const regionalTrending = {
+            IN: ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'BTC', 'USDINR'],
+            US: ['AAPL', 'NVDA', 'BTC', 'TSLA', 'ETH', 'MSFT', 'AMD', 'SOL'],
+            GLOBAL: ['NIFTY', 'AAPL', 'BTC', 'RELIANCE', 'NVDA', 'ETH', 'TCS', 'EURUSD'],
+        };
 
-    const trending = (regionalTrending[DEFAULT_MARKET_REGION] || regionalTrending.IN).map(stripStockSuffix);
+        const region = String(DEFAULT_MARKET_REGION || 'IN').toUpperCase();
+        const baseTrending = regionalTrending[region] || regionalTrending.IN || [];
+        const trending = baseTrending.map(stripStockSuffix);
 
-    res.json({
-        success: true,
-        trending,
-    });
+        res.json({
+            success: true,
+            trending,
+        });
+    } catch (error) {
+        console.error('Failed to get trending searches:', error);
+        res.status(200).json({
+            success: true,
+            trending: ['NIFTY', 'RELIANCE', 'TCS', 'BTC'],
+            message: 'Fallback active'
+        });
+    }
 };
 const logSearchEndpoint = (req, res) => {
     res.json({ success: true });

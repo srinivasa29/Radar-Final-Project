@@ -22,6 +22,33 @@ const BACKEND_INTERVAL_MAP = {
   "1D": "1M",
 };
 
+const FALLBACK_BASE_PRICE = {
+  "NIFTY 50": 22500,
+  BANKNIFTY: 48500,
+  RELIANCE: 2950,
+  HDFCBANK: 1660,
+  TCS: 4030,
+  INFY: 1580,
+};
+
+const FALLBACK_POINTS_BY_TIMEFRAME = {
+  "1m": 40,
+  "5m": 40,
+  "15m": 36,
+  "1h": 30,
+  "4h": 24,
+  "1D": 20,
+};
+
+const FALLBACK_STEP_MINUTES = {
+  "1m": 1,
+  "5m": 5,
+  "15m": 15,
+  "1h": 60,
+  "4h": 240,
+  "1D": 1440,
+};
+
 const normalizeChartSymbol = (value) => {
   const raw = String(value || "").trim();
   if (!raw) return "";
@@ -43,6 +70,42 @@ const calculateMA = (data, period) => {
     if (index < period - 1) return null;
     const sum = data.slice(index - period + 1, index + 1).reduce((acc, p) => acc + (p.price || p.close), 0);
     return sum / period;
+  });
+};
+
+const symbolSeed = (symbol) => {
+  return String(symbol || "")
+    .split("")
+    .reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+};
+
+const generateFallbackHistory = (symbol, timeframe) => {
+  const pointCount = FALLBACK_POINTS_BY_TIMEFRAME[timeframe] || 36;
+  const stepMinutes = FALLBACK_STEP_MINUTES[timeframe] || 15;
+  const seed = symbolSeed(symbol);
+  const base = FALLBACK_BASE_PRICE[symbol] || Math.max(120, seed * 2.5);
+  const now = Date.now();
+
+  return Array.from({ length: pointCount }, (_, index) => {
+    const phase = index + 1;
+    const wave = Math.sin((phase + seed % 13) / 4.5) * 0.0045;
+    const drift = (phase - pointCount / 2) * 0.00045;
+    const close = base * (1 + wave + drift);
+    const open = close * (1 + Math.sin((phase + seed) / 5.8) * 0.0018);
+    const high = Math.max(open, close) * 1.0022;
+    const low = Math.min(open, close) * 0.9978;
+    const timestamp = now - (pointCount - 1 - index) * stepMinutes * 60 * 1000;
+
+    return {
+      timestamp,
+      time: new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      open,
+      high,
+      low,
+      close,
+      price: close,
+      __source: "fallback",
+    };
   });
 };
 
@@ -98,11 +161,11 @@ const MultiChartGrid = ({ className, onOpenChart, timeframe = "15m", showIndicat
               close: d.close
             }));
           } else {
-            newHistories[sym] = [];
+            newHistories[sym] = generateFallbackHistory(sym, timeframe);
           }
         } catch (err) {
           console.error(`Failed to fetch history for ${sym}`, err);
-          newHistories[sym] = [];
+          newHistories[sym] = generateFallbackHistory(sym, timeframe);
         }
       }));
       setHistories(prev => ({ ...prev, ...newHistories }));
@@ -110,17 +173,17 @@ const MultiChartGrid = ({ className, onOpenChart, timeframe = "15m", showIndicat
     };
     fetchAll();
   }, [chartsToShowKey, timeframe]);
-  const getGridClass = () => {
+  const getLayoutClass = () => {
     switch (layout) {
-      case "1-grid": return "grid-cols-1 grid-rows-1";
-      case "2-grid": return "grid-cols-2 grid-rows-1";
-      case "4-grid": return "grid-cols-2 grid-rows-2";
-      default: return "grid-cols-2 grid-rows-2";
+      case "1-grid": return "layout-1-grid";
+      case "2-grid": return "layout-2-grid";
+      case "4-grid": return "layout-4-grid";
+      default: return "layout-4-grid";
     }
   };
 
   return (
-    <div className={`${className} h-full min-h-0`}>
+    <div className={`${className} h-full min-h-0 w-full`}>
       <div className="flex flex-col h-full min-h-0">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2.5 gap-2">
           <div className="flex items-center gap-2">
@@ -143,9 +206,10 @@ const MultiChartGrid = ({ className, onOpenChart, timeframe = "15m", showIndicat
             )}
           </div>
         </div>
-        <div className={`flex-1 min-h-0 grid auto-rows-fr ${getGridClass()} gap-2 mb-1`}>
+        <div className={`multi-chart-grid ${getLayoutClass()} flex-1 min-h-0 mb-1`}>
           {chartsToShow.map((title, i) => {
             const chartData = histories[title] || [];
+            const isFallback = chartData[0]?.__source === "fallback";
             const ma7 = showIndicators ? calculateMA(chartData, 7) : [];
             const ma25 = showIndicators ? calculateMA(chartData, 25) : [];
             const latest = chartData[chartData.length - 1] || {};
@@ -156,7 +220,7 @@ const MultiChartGrid = ({ className, onOpenChart, timeframe = "15m", showIndicat
             return (
               <div
                 key={i}
-                className="bg-white/5 border border-white/5 hover:border-white/10 transition-colors rounded-xl relative group flex flex-col overflow-hidden min-h-[220px]"
+                className="chart-card bg-white/5 border border-white/5 hover:border-white/10 transition-colors rounded-xl relative group flex flex-col overflow-hidden"
               >
                 <div className="flex justify-between text-xs px-2.5 py-1.5 border-b border-white/5 bg-white/5">
                   <div>
@@ -164,6 +228,11 @@ const MultiChartGrid = ({ className, onOpenChart, timeframe = "15m", showIndicat
                       <span className="text-white font-bold text-sm tracking-wide">
                         {title}
                       </span>
+                      {isFallback && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-amber-300 bg-amber-400/10 border border-amber-300/30 rounded px-1.5 py-0.5">
+                          Reference
+                        </span>
+                      )}
                       <span className={`${isPos ? 'text-[#42C0A5]' : 'text-red-400'} text-xs font-mono font-bold`}>
                         {(latest.close || 0).toLocaleString()} ({isPos ? '+' : ''}{pctChange}%)
                       </span>
@@ -200,10 +269,6 @@ const MultiChartGrid = ({ className, onOpenChart, timeframe = "15m", showIndicat
                   {isLoading ? (
                     <div className="h-full w-full flex items-center justify-center text-[10px] text-[#5d606b] font-mono uppercase tracking-wider">
                       Loading backend history...
-                    </div>
-                  ) : chartData.length === 0 ? (
-                    <div className="h-full w-full flex items-center justify-center text-[10px] text-[#5d606b] font-mono uppercase tracking-wider">
-                      No backend chart data
                     </div>
                   ) : (
                     <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>

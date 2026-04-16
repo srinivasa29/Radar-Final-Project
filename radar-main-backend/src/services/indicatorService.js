@@ -18,7 +18,17 @@ const getTechnicalIndicators = async (assetType, symbol, interval = '1D', option
     }
 
     if (!history || history.length < 26) {
-        throw new Error(`Not enough historical data to compute indicators for ${symbol}`);
+        return {
+            rsi: null,
+            macd: null,
+            ema20: null,
+            volumeStatus: 'average',
+            lastPrice: history?.length ? history[history.length - 1].price : null,
+            previousPrice: history?.length > 1 ? history[history.length - 2].price : null,
+            lastChangePercent: null,
+            lastUpdatedAt: history?.length ? history[history.length - 1].date : null,
+            status: 'insufficient_data'
+        };
     }
     const rsiRaw = calculateRSI(history, 14);
     const rsi = rsiRaw.length > 0 ? rsiRaw[rsiRaw.length - 1].value : null;

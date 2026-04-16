@@ -24,12 +24,17 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
-const StockPage = lazy(() => import('./pages/StockPage'));
+const TraderStockPage = lazy(() => import('./pages/TraderStockPage'));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const RealtimeDemoPage = lazy(() => import('./pages/RealtimeDemoPage'));
 const SpecShowcasePage = lazy(() => import('./pages/SpecShowcase'));
+<<<<<<< Updated upstream
 const Onboarding = lazy(() => import('./pages/Onboarding'));
 const InvestorStockPage = lazy(() => import('./pages/InvestorStockPage'));
+=======
+const MarketResearchDashboard = lazy(() => import('./pages/MarketResearchDashboard'));
+const ScreenerPage = lazy(() => import('./pages/ScreenerPage'));
+>>>>>>> Stashed changes
 
 const AppLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-[#020617] text-[#E2E8F0]">
@@ -114,13 +119,17 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/auth/oauth/callback" element={<OAuthCallbackRoute />} />
+<<<<<<< Updated upstream
             <Route path="/stocks/:symbol" element={<StockPage />} />
             <Route path="/investor-stock/:symbol" element={<InvestorStockPage />} />
+=======
+            <Route path="/stocks/:symbol" element={<TraderStockPage />} />
+>>>>>>> Stashed changes
             <Route path="/asset/:symbol" element={<AssetAliasRoute />} />
             <Route path="/trader/momentum" element={<DashboardAliasRoute mode="TRADER" module="DASHBOARD" />} />
             <Route path="/investor/valuation" element={<DashboardAliasRoute mode="INVESTOR" module="DASHBOARD" />} />
             <Route path="/investor/filings" element={<InvestorFilingsPage />} />
-            <Route path="/screener" element={<DashboardAliasRoute mode="TRADER" module="SCREENERS" />} />
+            <Route path="/screener" element={<ScreenerPage />} />
             <Route path="/search" element={<GlobalSearchPage />} />
             <Route path="/discovery" element={<DiscoveryPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
@@ -134,6 +143,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/health" element={<Navigate to="/admin" replace />} />
             <Route path="/demo" element={<RealtimeDemoPage />} />
+            <Route path="/research-dashboard" element={<MarketResearchDashboard />} />
             <Route path="/spec/components" element={<SpecShowcasePage />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/404" element={<RouteStatusPage title="404 - Not Found" message="The page you requested does not exist or may have moved." actionTo="/" actionLabel="Return Home" />} />

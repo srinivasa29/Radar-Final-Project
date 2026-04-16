@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import api from '../api/api';
@@ -22,6 +23,12 @@ import {
     Settings,
     LogOut
 } from 'lucide-react';
+=======
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import api from '../api/api';
+import { AdvancedWatchlistDashboard } from '../components/watchlist';
+>>>>>>> Stashed changes
 
 const toPayload = (value, fallback = null) => {
     if (value && typeof value === 'object' && Object.prototype.hasOwnProperty.call(value, 'data')) {
@@ -290,6 +297,10 @@ export function CalendarPage() {
 
 export function NewsPage() {
     const [rows, setRows] = useState([]);
+    const [activeTab, setActiveTab] = useState('live');
+    const [sortBy, setSortBy] = useState('latest');
+    const [selectedSource, setSelectedSource] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const load = async () => {
@@ -300,83 +311,235 @@ export function NewsPage() {
         load();
     }, []);
 
+    // Filter and sort news
+    const filteredNews = rows.filter(item => {
+        const matchesSource = selectedSource === 'all' || item.source === selectedSource;
+        const matchesSearch = searchQuery === '' || item.title.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesSource && matchesSearch;
+    }).sort((a, b) => {
+        if (sortBy === 'latest') {
+            return new Date(b.publishedAt || b.time) - new Date(a.publishedAt || a.time);
+        }
+        return 0;
+    });
+
+    const uniqueSources = ['all', ...Array.from(new Set(rows.map(item => item.source)))];
+
+    const getImpactBadge = (item) => {
+        if (item.sentiment === 'positive') return { text: 'Bullish', color: 'emerald' };
+        if (item.sentiment === 'negative') return { text: 'Bearish', color: 'rose' };
+        return { text: 'Neutral', color: 'slate' };
+    };
+
     return (
         <PageShell
             title="Financial News"
             subtitle="Aggregated market feed from configured news providers."
         >
-            <div className="space-y-3">
-                {rows.map((item, index) => (
-                    <article key={`${item.title}-${index}`} className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                        <h2 className="font-black">{item.title}</h2>
-                        <p className="text-xs text-slate-400 mt-1">{item.source} • {item.time || item.publishedAt || '-'}</p>
-                        {item.url ? (
-                            <a href={item.url} target="_blank" rel="noreferrer" className="text-sm text-cyan-300 mt-2 inline-block">Open story</a>
-                        ) : null}
-                    </article>
-                ))}
+            <div className="space-y-6">
+                {/* Controls Section */}
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4">
+                    {/* Search Bar */}
+                    <div className="flex gap-3">
+                        <div className="flex-1 relative">
+                            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input
+                                type="text"
+                                placeholder="Search news, symbols, sources..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/50 border border-white/10 text-sm placeholder-slate-500 focus:outline-none focus:border-cyan-400/50"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Tabs and Filters */}
+                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                        <div className="flex gap-2">
+                            {['live', 'top news', 'watchlist', 'my feeds'].map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                                        activeTab === tab
+                                            ? 'bg-cyan-500 text-slate-950'
+                                            : 'bg-white/5 border border-white/10 text-slate-300 hover:border-white/20'
+                                    }`}
+                                >
+                                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="flex gap-3">
+                            {/* Sort Dropdown */}
+                            <div>
+                                <label className="text-xs text-slate-400">Sort:</label>
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="ml-1 px-3 py-1.5 rounded-lg bg-slate-900 border border-white/10 text-xs text-slate-200 focus:outline-none focus:border-cyan-400/50"
+                                >
+                                    <option value="latest">Latest</option>
+                                    <option value="trending">Trending</option>
+                                    <option value="impact">Impact</option>
+                                </select>
+                            </div>
+
+                            {/* Source Filter */}
+                            <div>
+                                <label className="text-xs text-slate-400">Source:</label>
+                                <select
+                                    value={selectedSource}
+                                    onChange={(e) => setSelectedSource(e.target.value)}
+                                    className="ml-1 px-3 py-1.5 rounded-lg bg-slate-900 border border-white/10 text-xs text-slate-200 focus:outline-none focus:border-cyan-400/50"
+                                >
+                                    {uniqueSources.map((source) => (
+                                        <option key={source} value={source}>
+                                            {source.charAt(0).toUpperCase() + source.slice(1)}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* News Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Main News Column */}
+                    <div className="lg:col-span-2 space-y-3">
+                        {filteredNews.length > 0 ? (
+                            filteredNews.map((item, index) => {
+                                const impactBadge = getImpactBadge(item);
+                                return (
+                                    <article
+                                        key={`${item.title}-${index}`}
+                                        className="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] hover:border-cyan-500/30 hover:bg-white/10 transition-all p-5 cursor-pointer"
+                                    >
+                                        <div className="flex gap-4">
+                                            {/* Icon/Avatar */}
+                                            <div className="flex-shrink-0">
+                                                <div className="w-12 h-12 rounded-lg bg-slate-800 border border-white/10 flex items-center justify-center">
+                                                    <span className="text-lg font-black text-cyan-400">
+                                                        {item.source?.charAt(0).toUpperCase() || '📰'}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="flex-1">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="flex-1">
+                                                        <h3 className="font-black text-base leading-snug group-hover:text-cyan-300 transition-colors">
+                                                            {item.title}
+                                                        </h3>
+                                                        <p className="text-xs text-slate-400 mt-2">
+                                                            {item.source} • {item.time || item.publishedAt || '-'}
+                                                        </p>
+                                                    </div>
+                                                    <a
+                                                        href={item.url}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                        </svg>
+                                                    </a>
+                                                </div>
+
+                                                {item.description && (
+                                                    <p className="text-sm text-slate-300 mt-3 line-clamp-2">
+                                                        {item.description}
+                                                    </p>
+                                                )}
+
+                                                {/* Tags and Impact */}
+                                                <div className="flex items-center gap-2 mt-3 flex-wrap">
+                                                    <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold bg-${impactBadge.color}-500/20 text-${impactBadge.color}-300 border border-${impactBadge.color}-500/30`}>
+                                                        {impactBadge.text}
+                                                    </span>
+                                                    {item.symbols && item.symbols.length > 0 && (
+                                                        <div className="flex gap-1">
+                                                            {item.symbols.slice(0, 3).map((symbol) => (
+                                                                <span key={symbol} className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-800 border border-white/10 text-cyan-400">
+                                                                    {symbol}
+                                                                </span>
+                                                            ))}
+                                                            {item.symbols.length > 3 && (
+                                                                <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-800 border border-white/10 text-slate-400">
+                                                                    +{item.symbols.length - 3}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                );
+                            })
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-12 text-center">
+                                <svg className="w-12 h-12 text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <p className="text-slate-400 text-sm">No news found matching your criteria</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="space-y-6">
+                        {/* Top Stories Widget */}
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+                            <h3 className="font-black text-sm">TOP STORIES</h3>
+                            <div className="space-y-3">
+                                {rows.slice(0, 5).map((item, index) => (
+                                    <div key={`top-${index}`} className="pb-3 border-b border-white/10 last:pb-0 last:border-0">
+                                        <p className="text-xs font-bold text-cyan-400 mb-1">{index + 1}</p>
+                                        <p className="text-xs line-clamp-2 leading-snug text-slate-200 font-semibold">
+                                            {item.title}
+                                        </p>
+                                        <p className="text-xs text-slate-500 mt-1">{item.source}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Sources Widget */}
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+                            <h3 className="font-black text-sm">SOURCES</h3>
+                            <div className="space-y-2">
+                                {uniqueSources.slice(1, 6).map((source) => {
+                                    const count = rows.filter(item => item.source === source).length;
+                                    return (
+                                        <div
+                                            key={source}
+                                            onClick={() => setSelectedSource(source)}
+                                            className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-900/30 hover:bg-slate-900/60 cursor-pointer transition-colors"
+                                        >
+                                            <span className="text-xs font-semibold text-slate-300">{source}</span>
+                                            <span className="text-xs font-bold text-cyan-400">{count}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </PageShell>
     );
 }
 
 export function WatchlistsPage() {
-    const [symbol, setSymbol] = useState('');
-    const [items, setItems] = useState([]);
-
-    const refresh = async () => {
-        const response = await api.get('/user/watchlists').catch(() => ({ data: [] }));
-        const payload = toPayload(response.data, []);
-        const first = Array.isArray(payload) && payload.length > 0 ? payload[0] : { items: [] };
-        setItems(Array.isArray(first.items) ? first.items : []);
-    };
-
-    useEffect(() => {
-        scheduleAsync(refresh);
-    }, []);
-
-    const addSymbol = async () => {
-        if (!symbol.trim()) return;
-        await api.post('/user/watchlists/default/symbols', { symbol: symbol.trim().toUpperCase(), assetType: 'STOCK' }).catch(() => null);
-        setSymbol('');
-        refresh();
-    };
-
-    const removeSymbol = async (value) => {
-        await api.delete(`/user/watchlists/default/symbols/${encodeURIComponent(value)}`).catch(() => null);
-        refresh();
-    };
-
-    return (
-        <PageShell
-            title="Watchlists"
-            subtitle="Manage your saved symbols."
-        >
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4">
-                <div className="flex gap-2">
-                    <input
-                        value={symbol}
-                        onChange={(event) => setSymbol(event.target.value)}
-                        placeholder="Add symbol (e.g. RELIANCE)"
-                        className="flex-1 rounded-lg bg-slate-900 border border-white/10 px-3 py-2 text-sm"
-                    />
-                    <button onClick={addSymbol} className="rounded-lg bg-cyan-400 text-slate-950 px-4 py-2 font-bold text-sm">Add</button>
-                </div>
-
-                <div className="space-y-2">
-                    {items.map((item) => (
-                        <div key={item.symbol} className="rounded-lg border border-white/10 px-3 py-2 flex items-center justify-between">
-                            <div>
-                                <div className="font-black text-sm">{item.symbol}</div>
-                                <div className="text-xs text-slate-400">{item.assetType}</div>
-                            </div>
-                            <button onClick={() => removeSymbol(item.symbol)} className="text-xs font-bold text-rose-300">Remove</button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </PageShell>
-    );
+    return <AdvancedWatchlistDashboard />;
 }
 
 export function PortfolioPage() {

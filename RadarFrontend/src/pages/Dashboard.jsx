@@ -13,12 +13,10 @@ import {
   User,
   Settings,
   HelpCircle,
-  Activity,
-  TrendingUp,
   LogOut,
 } from "lucide-react";
 import { updateUserMode } from "../api/userApi";
-import { fetchMarketData, fetchTrendingSearches, logSearchQuery } from "../api/marketApi";
+import { fetchMarketData, fetchTrendingSearches, logSearchQuery, fetchUniversalSymbolSearch } from "../api/marketApi";
 import { useHeaderData } from "../hooks/useHeaderData";
 import MarketTicker from "../components/dashboard/MarketTicker";
 import "./Dashboard.css";
@@ -52,6 +50,55 @@ const DashboardLoader = ({ label = "Loading dashboard..." }) => (
       <p className="text-sm font-semibold tracking-wide">{label}</p>
     </div>
   </div>
+);
+
+const ProfileHeader = ({ email, initial }) => (
+  <div className="dropdown-profile-header">
+    <div className="dropdown-profile-avatar" aria-hidden="true">
+      {initial}
+    </div>
+    <div className="dropdown-profile-copy">
+      <p className="dropdown-profile-name">Demo User</p>
+      <p className="dropdown-profile-email">{email}</p>
+    </div>
+  </div>
+);
+
+const MenuItem = ({ icon: Icon, label, onClick }) => (
+  <button type="button" onClick={onClick} className="dropdown-menu-item">
+    <span className="dropdown-menu-icon">
+      <Icon size={15} />
+    </span>
+    <span className="dropdown-menu-label">{label}</span>
+  </button>
+);
+
+const ToggleSwitch = ({ activeOption, onSelect }) => {
+  const options = ["Investor", "Trader"];
+
+  return (
+    <div className="dropdown-toggle-group" role="tablist" aria-label="Choose your interface">
+      {options.map((option) => {
+        const isSelected = option === activeOption;
+        return (
+          <button
+            key={option}
+            type="button"
+            role="tab"
+            aria-selected={isSelected}
+            onClick={() => onSelect(option)}
+            className={`dropdown-toggle-option ${isSelected ? "selected" : ""}`}
+          >
+            {option}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+const DropdownCard = ({ children }) => (
+  <div className="trader-profile-popover profile-dropdown dropdown-profile-card">{children}</div>
 );
 
 export default function Dashboard() {
@@ -107,8 +154,8 @@ export default function Dashboard() {
       document.body.style.backgroundColor = "";
       document.body.style.backgroundImage = "none";
     } else {
-      document.body.style.backgroundColor = "";
-      document.body.style.backgroundImage = "";
+      document.body.style.backgroundColor = "#0F172A";
+      document.body.style.backgroundImage = "none";
     }
     return () => {
       document.body.style.backgroundColor = "";
@@ -166,6 +213,16 @@ export default function Dashboard() {
     };
   }, [isTraderMode]);
 
+  const handleModuleChange = (moduleId) => {
+    const module = String(moduleId || "").toUpperCase();
+    if (!["DASHBOARD", "WATCHLIST", "SCREENERS", "NEWS"].includes(module)) {
+      return;
+    }
+
+    setActiveModule(module);
+    navigate({ pathname: "/dashboard", search: `?module=${module}` }, { replace: false });
+  };
+
   useEffect(() => {
     if (!isTraderMode) return;
 
@@ -180,7 +237,10 @@ export default function Dashboard() {
     const timeout = setTimeout(async () => {
       try {
         setIsTraderSearching(true);
-        const response = await fetchMarketData({ search: query });
+        let response = await fetchUniversalSymbolSearch(query, 8);
+        if (!Array.isArray(response) || response.length === 0) {
+          response = await fetchMarketData({ search: query });
+        }
         if (isMounted) {
           setTraderSearchResults(Array.isArray(response) ? response.slice(0, 8) : []);
         }
@@ -318,7 +378,7 @@ export default function Dashboard() {
                   transition={{ delay: 0.6, duration: 0.5 }}
                   className="text-xs md:text-sm text-[#00f3ff] font-bold tracking-[0.3em] uppercase"
                 >
-                  Switching to Trader Mode
+                  Switching to Alpha Research
                 </motion.p>
               </div>
               <div className="w-32 h-[2px] bg-white/5 rounded-full overflow-hidden relative">
@@ -335,7 +395,7 @@ export default function Dashboard() {
       </AnimatePresence>
       {isTraderMode && (
         <>
-          <header className="navbar trader-glass-bar sticky top-0 z-50 px-6 mb-6">
+          <header className="navbar trader-glass-bar z-[100] px-6">
             <div className="max-w-[1920px] mx-auto w-full flex items-center justify-between">
               {}
               <div className="flex items-center gap-10">
@@ -360,7 +420,7 @@ export default function Dashboard() {
                   ].map((item) => (
                     <button
                       key={item.id}
-                      onClick={() => setActiveModule(item.id)}
+                      onClick={() => handleModuleChange(item.id)}
                       className={`nav-link flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeModule === item.id
                         ? isTraderMode
                           ? "bg-[#00f3ff]/10 text-[#00f3ff] border border-[#00f3ff]/20 shadow-[0_0_15px_rgba(0,243,255,0.1)]"
@@ -379,73 +439,74 @@ export default function Dashboard() {
 
               {}
               <div className="flex items-center gap-6">
-                <div className="relative group w-64 hidden xl:block" ref={traderSearchContainerRef}>
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#00f3ff] transition-colors">
-                    <Search size={14} />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search symbol and press Enter"
-                    value={traderSearchQuery}
-                    onFocus={() => {
-                      setShowTraderSearchDropdown(true);
-                      setTraderHighlightedIndex(traderSearchQuery.trim().length > 0 ? (traderSearchResults.length > 0 ? 0 : -1) : (traderTrendingSearches.length > 0 ? 0 : -1));
-                    }}
-                    onChange={(e) => {
-                      setTraderSearchQuery(e.target.value);
-                      setShowTraderSearchDropdown(true);
-                      setTraderHighlightedIndex(0);
-                    }}
-                    onKeyDown={async (e) => {
-                      const usingSearchResults = traderSearchQuery.trim().length > 0;
-                      const optionsLength = usingSearchResults ? traderSearchResults.length : traderTrendingSearches.length;
-
-                      if (e.key === "ArrowDown" && optionsLength > 0) {
-                        e.preventDefault();
+                <div className="relative group w-80 hidden xl:block" ref={traderSearchContainerRef}>
+                  <div className="w-full h-10 rounded-full border border-[#243047] bg-[#0f172a] flex items-center pl-3 pr-1.5 gap-2">
+                    <div className="text-[#00f3ff]">
+                      <Search size={14} />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search symbol"
+                      value={traderSearchQuery}
+                      onFocus={() => {
                         setShowTraderSearchDropdown(true);
-                        setTraderHighlightedIndex((prev) => (prev + 1 + optionsLength) % optionsLength);
-                        return;
-                      }
-
-                      if (e.key === "ArrowUp" && optionsLength > 0) {
-                        e.preventDefault();
+                        setTraderHighlightedIndex(traderSearchQuery.trim().length > 0 ? (traderSearchResults.length > 0 ? 0 : -1) : (traderTrendingSearches.length > 0 ? 0 : -1));
+                      }}
+                      onChange={(e) => {
+                        setTraderSearchQuery(e.target.value);
                         setShowTraderSearchDropdown(true);
-                        setTraderHighlightedIndex((prev) => (prev - 1 + optionsLength) % optionsLength);
-                        return;
-                      }
+                        setTraderHighlightedIndex(0);
+                      }}
+                      onKeyDown={async (e) => {
+                        const usingSearchResults = traderSearchQuery.trim().length > 0;
+                        const optionsLength = usingSearchResults ? traderSearchResults.length : traderTrendingSearches.length;
 
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        if (usingSearchResults && traderSearchResults.length > 0) {
-                          const selected = traderSearchResults[Math.max(0, traderHighlightedIndex)] || traderSearchResults[0];
-                          await handleTraderSearchSelect(selected);
-                        } else if (!usingSearchResults && traderTrendingSearches.length > 0) {
-                          const selectedTrend = traderTrendingSearches[Math.max(0, traderHighlightedIndex)] || traderTrendingSearches[0];
-                          await handleTraderTrendingSelect(selectedTrend);
-                        } else if (traderSearchQuery.trim()) {
-                          await submitTraderSearch();
+                        if (e.key === "ArrowDown" && optionsLength > 0) {
+                          e.preventDefault();
+                          setShowTraderSearchDropdown(true);
+                          setTraderHighlightedIndex((prev) => (prev + 1 + optionsLength) % optionsLength);
+                          return;
                         }
-                        return;
-                      }
 
-                      if (e.key === "Escape") {
-                        setShowTraderSearchDropdown(false);
-                        setTraderHighlightedIndex(-1);
-                      }
-                    }}
-                    className="navbar-search w-full border rounded-full py-2 pl-9 pr-16 text-xs text-white focus:outline-none transition-all placeholder:text-gray-500"
-                    style={{ background: '#141923', borderColor: '#00F3FF', boxShadow: '0 0 8px rgba(0,243,255,0.15)', color: '#EAF9FF', caretColor: '#00F3FF' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={submitTraderSearch}
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide text-[#00f3ff] hover:bg-[#00f3ff]/10 transition-colors"
-                  >
-                    Go
-                  </button>
+                        if (e.key === "ArrowUp" && optionsLength > 0) {
+                          e.preventDefault();
+                          setShowTraderSearchDropdown(true);
+                          setTraderHighlightedIndex((prev) => (prev - 1 + optionsLength) % optionsLength);
+                          return;
+                        }
+
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          if (usingSearchResults && traderSearchResults.length > 0) {
+                            const selected = traderSearchResults[Math.max(0, traderHighlightedIndex)] || traderSearchResults[0];
+                            await handleTraderSearchSelect(selected);
+                          } else if (!usingSearchResults && traderTrendingSearches.length > 0) {
+                            const selectedTrend = traderTrendingSearches[Math.max(0, traderHighlightedIndex)] || traderTrendingSearches[0];
+                            await handleTraderTrendingSelect(selectedTrend);
+                          } else if (traderSearchQuery.trim()) {
+                            await submitTraderSearch();
+                          }
+                          return;
+                        }
+
+                        if (e.key === "Escape") {
+                          setShowTraderSearchDropdown(false);
+                          setTraderHighlightedIndex(-1);
+                        }
+                      }}
+                      className="flex-1 min-w-0 bg-transparent border-0 outline-none text-sm text-white placeholder:text-gray-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={submitTraderSearch}
+                      className="h-7 min-w-[44px] px-2 rounded-full inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-wide text-[#00f3ff] border border-[#243047] bg-[#0b1224]"
+                    >
+                      Go
+                    </button>
+                  </div>
 
                   {showTraderSearchDropdown && (
-                    <div className="absolute top-11 left-0 right-0 bg-[#0f1622] border border-[#00f3ff]/20 rounded-2xl shadow-xl overflow-hidden z-[120]">
+                    <div className="trader-search-dropdown absolute top-11 left-0 right-0 rounded-2xl shadow-xl overflow-hidden z-[120]">
                       {isTraderSearching && (
                         <div className="px-4 py-3 text-xs font-semibold text-[#9fb4c8]">Searching market...</div>
                       )}
@@ -511,8 +572,7 @@ export default function Dashboard() {
 
                     {}
                     {isNotificationsOpen && (
-                      <div className="absolute right-0 top-11 w-80 rounded-xl shadow-2xl border border-white/10 py-2 backdrop-blur-xl z-[100] origin-top-right"
-                        style={{ background: '#0b1d21' }}>
+                      <div className="absolute right-0 top-11 w-80 rounded-xl shadow-2xl border border-white/10 py-2 backdrop-blur-xl z-[100] origin-top-right">
                         {}
                         <div className="px-4 py-2 border-b border-white/10 flex justify-between items-center">
                           <h3 className="font-bold text-sm text-white">Notifications</h3>
@@ -561,7 +621,7 @@ export default function Dashboard() {
                   </div>
 
                   {}
-                  <div className="relative" ref={profileRef}>
+                  <div className="profile-wrapper" ref={profileRef}>
                     <div
                       onClick={() => setIsProfileOpen(!isProfileOpen)}
                       className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#00f3ff] to-[#bc13fe] flex items-center justify-center text-xs font-bold text-white cursor-pointer shadow-lg hover:scale-105 transition-transform"
@@ -571,18 +631,21 @@ export default function Dashboard() {
 
                     {}
                     {isProfileOpen && (
-                      <div className="absolute right-0 mt-3 w-72 bg-[#0b0e14] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
-                        {}
-                        <div className="px-4 py-4 border-b border-white/10 flex items-center gap-3 bg-white/5">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#00f3ff] to-[#bc13fe] flex items-center justify-center text-base font-bold text-white shadow-lg">
-                            {userInitial}
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-white">{profile?.username || "Current User"}</p>
-                            <p className="text-xs text-gray-500">{profile?.email || localStorage.getItem('email') || 'user@radar.com'}</p>
-                          </div>
+                      <DropdownCard>
+                        <ProfileHeader
+                          initial={userInitial}
+                          email={profile?.email || "demo.user@radar.ai"}
+                        />
+
+                        <div className="profile-divider" />
+
+                        <div className="dropdown-menu-list">
+                          <MenuItem icon={User} label="My Profile" onClick={() => setIsProfileOpen(false)} />
+                          <MenuItem icon={Settings} label="Settings" onClick={() => setIsProfileOpen(false)} />
+                          <MenuItem icon={HelpCircle} label="Help & Support" onClick={() => setIsProfileOpen(false)} />
                         </div>
 
+<<<<<<< Updated upstream
                         {}
                         <div className="py-2">
                           <Link 
@@ -606,69 +669,51 @@ export default function Dashboard() {
                           >
                             <HelpCircle size={16} /> Help &amp; Support
                           </Link>
+=======
+                        <div className="profile-divider" />
+
+                        <div className="dropdown-interface-section">
+                          <p className="dropdown-interface-title">CHOOSE YOUR INTERFACE</p>
+                          <ToggleSwitch
+                            activeOption={isTraderMode ? "Trader" : "Investor"}
+                            onSelect={(option) => {
+                              const shouldTraderMode = option === "Trader";
+                              if (shouldTraderMode !== isTraderMode) {
+                                toggleMode();
+                              }
+                            }}
+                          />
+>>>>>>> Stashed changes
                         </div>
 
-                        {}
-                        <div className="border-t border-b border-white/10 py-3 px-4 bg-black/20">
-                          <div className="text-[10px] font-bold uppercase tracking-wider mb-3 text-center text-gray-500">
-                            Choose Your Interface
-                          </div>
+                        <div className="profile-divider" />
 
-                          <div
-                            className="relative w-full h-12 rounded-full cursor-pointer flex items-center p-1.5 transition-all duration-300 shadow-inner group bg-black/40 border border-white/10"
-                            onClick={toggleMode}
-                          >
-                            {}
-                            <div
-                              className="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] rounded-full shadow-[0_0_15px_rgba(0,243,255,0.2)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform translate-x-full bg-[#161c27] border border-[#00f3ff]/30"
-                            >
-                            </div>
-
-                            {}
-                            <div className="w-1/2 flex items-center justify-center relative z-10 gap-2 h-full opacity-60 hover:opacity-100 transition-opacity">
-                              <Activity size={16} className="text-gray-400" />
-                              <span className="text-xs font-bold text-gray-400">Investor</span>
-                            </div>
-
-                            {}
-                            <div className="w-1/2 flex items-center justify-center relative z-10 gap-2 h-full">
-                              <TrendingUp size={16} className="text-[#00f3ff] drop-shadow-[0_0_5px_rgba(0,243,255,0.5)]" />
-                              <span className="text-xs font-bold text-[#00f3ff]">Trader</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {}
-                        <div className="pt-1 pb-1 bg-[#0b0e14]">
-                          <button
-                            onClick={() => { setIsProfileOpen(false); setShowLogoutModal(true); }}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors group"
-                          >
-                            <LogOut size={16} className="text-red-400 group-hover:text-red-300" />
-                            <span className="text-sm text-red-400 group-hover:text-red-300 font-medium">
-                              Sign Out
-                            </span>
-                          </button>
-                        </div>
-                      </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsProfileOpen(false);
+                            setShowLogoutModal(true);
+                          }}
+                          className="dropdown-signout-btn"
+                        >
+                          <LogOut size={15} />
+                          <span>Sign Out</span>
+                        </button>
+                      </DropdownCard>
                     )}
                   </div>
                 </div>
               </div>
             </div>
           </header>
-          {activeModule === "DASHBOARD" && (
-            <div className="mb-0">
-              <MarketTicker />
-            </div>
-          )}
+          {/* MarketTicker removed here to prevent duplication with TraderView */}
         </>
       )}
 
       <main className="content fade-in transition-all duration-300 w-full">
         <Suspense fallback={<DashboardLoader label="Loading trader mode..." />}>
           {isTraderMode && (
-            <TraderView activeModule={activeModule} />
+            <TraderView activeModule={activeModule} onRequestModuleChange={handleModuleChange} />
           )}
         </Suspense>
       </main>
@@ -679,46 +724,37 @@ export default function Dashboard() {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="w-full max-w-md rounded-2xl p-6 shadow-2xl"
-            style={{ background: '#0b1d21', border: '1px solid rgba(0,243,255,0.15)' }}
+            className="trader-logout-modal w-full max-w-md rounded-2xl p-6 shadow-2xl"
           >
             <div className="text-center">
               {}
               <div
-                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', boxShadow: '0 0 24px rgba(0,243,255,0.15)' }}
+                className="trader-logout-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
               >
                 <LogOut size={32} />
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                 <div
-                  className="text-xl font-bold mb-2"
-                  style={{ color: '#ffffff', textTransform: 'none', letterSpacing: 'normal', textAlign: 'center' }}
+                  className="trader-logout-title text-xl font-bold mb-2"
                 >
                   Signing Out?
                 </div>
                 <p className="text-sm mb-8" style={{ color: '#9CA3AF', textAlign: 'center' }}>
-                  Ready to sign off, Trader? The market sleeps for no one!
+                  Ready to sign off? Markets never sleep, but research does.
                 </p>
               </div>
 
               <div className="flex gap-4">
                 <button
                   onClick={() => setShowLogoutModal(false)}
-                  className="flex-1 py-3 rounded-xl font-bold transition-all"
-                  style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', border: '1px solid rgba(0,243,255,0.2)' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,243,255,0.15)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,243,255,0.08)'}
+                  className="trader-logout-btn trader-logout-btn-secondary flex-1 py-3 rounded-xl font-bold transition-all"
                 >
                   No, Stay
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex-1 py-3 rounded-xl font-bold text-[#020617] transition-all"
-                  style={{ background: '#00f3ff', boxShadow: '0 4px 20px rgba(0,243,255,0.3)' }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = '0 6px 28px rgba(0,243,255,0.5)'}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,243,255,0.3)'}
+                  className="trader-logout-btn trader-logout-btn-primary flex-1 py-3 rounded-xl font-bold text-[#020617] transition-all"
                 >
                   Yes, Logout
                 </button>

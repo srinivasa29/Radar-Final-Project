@@ -69,10 +69,17 @@ const getBias = (score) => {
 };
 
 const getInstrumentScore = async (assetType, symbol, options = {}) => {
-    const [indicators, trendMatrix] = await Promise.all([
+    const results = await Promise.allSettled([
         getTechnicalIndicators(assetType, symbol, '1D', options),
         getTrendMatrix(assetType, symbol, options)
     ]);
+
+    const indicators = results[0].status === 'fulfilled' ? results[0].value : null;
+    const trendMatrix = results[1].status === 'fulfilled' ? results[1].value : {};
+
+    if (!indicators) {
+        return { score: 50, bias: 'neutral', message: 'Incomplete data for scoring' };
+    }
 
     const rsiPoints = getRsiPoints(indicators.rsi);
     const macdPoints = getMacdPoints(indicators.macd);

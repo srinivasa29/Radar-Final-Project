@@ -121,6 +121,32 @@ export const fetchTrendingSearches = async () => {
     }
 };
 
+export const fetchUniversalSymbolSearch = async (query, limit = 8) => {
+    try {
+        const q = String(query || '').trim();
+        if (!q) {
+            return [];
+        }
+
+        const response = await api.get('/market/search', {
+            params: { q, limit },
+        });
+
+        const payload = response.data?.data ?? [];
+        if (!Array.isArray(payload)) {
+            return [];
+        }
+
+        return payload.map((item) => ({
+            ...item,
+            symbol: stripStockSuffix(item?.symbol),
+        }));
+    } catch (error) {
+        console.error('Error searching universal symbols:', error);
+        return [];
+    }
+};
+
 export const logSearchQuery = async (query) => {
     try {
         await api.post('/market/search/log', { query });
