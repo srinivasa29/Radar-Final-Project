@@ -9,14 +9,21 @@ const ProfileDropdown = ({
   onClose, 
   avatarRef, 
   profile, 
+<<<<<<< HEAD
   userInitial,
   onSignOut
+=======
+  userInitial
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 }) => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [mode, setMode] = useState("trader");
+<<<<<<< HEAD
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 
   useEffect(() => {
     const saved = localStorage.getItem("mode");
@@ -37,12 +44,15 @@ const ProfileDropdown = ({
     localStorage.setItem("mode", mode);
   }, [mode]);
 
+<<<<<<< HEAD
   useEffect(() => {
     if (!isOpen && showSignOutConfirm) {
       setShowSignOutConfirm(false);
     }
   }, [isOpen, showSignOutConfirm]);
 
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
   // Calculate position based on avatar element
   useEffect(() => {
     if (!isOpen || !avatarRef?.current) return;
@@ -92,14 +102,20 @@ const ProfileDropdown = ({
         avatarRef?.current &&
         !avatarRef.current.contains(e.target)
       ) {
+<<<<<<< HEAD
         setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         onClose();
       }
     };
 
     const handleEscape = (e) => {
       if (e.key === "Escape") {
+<<<<<<< HEAD
         setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         onClose();
       }
     };
@@ -116,7 +132,10 @@ const ProfileDropdown = ({
   if (!isOpen) return null;
 
   const handleSelectMode = (nextMode) => {
+<<<<<<< HEAD
     setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     setMode(nextMode);
     if (nextMode === "investor") {
       navigate("/investor-dashboard");
@@ -158,7 +177,10 @@ const ProfileDropdown = ({
           type="button"
           className="dropdown-menu-item"
           onClick={() => {
+<<<<<<< HEAD
             setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             onClose();
             navigate("/profile");
           }}
@@ -172,7 +194,10 @@ const ProfileDropdown = ({
           type="button"
           className="dropdown-menu-item"
           onClick={() => {
+<<<<<<< HEAD
             setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             onClose();
             navigate("/settings");
           }}
@@ -186,7 +211,10 @@ const ProfileDropdown = ({
           type="button"
           className="dropdown-menu-item"
           onClick={() => {
+<<<<<<< HEAD
             setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             onClose();
             navigate("/support");
           }}
@@ -227,11 +255,17 @@ const ProfileDropdown = ({
       <button 
         type="button" 
         onClick={() => {
+<<<<<<< HEAD
           if (onSignOut) {
             onSignOut();
           } else {
             setShowSignOutConfirm(true);
           }
+=======
+          onClose();
+          localStorage.clear();
+          navigate("/login");
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         }}
         className="dropdown-signout-btn"
       >
@@ -241,6 +275,7 @@ const ProfileDropdown = ({
     </div>
   );
 
+<<<<<<< HEAD
   const confirmOverlay = (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#0B0E14]/90 backdrop-blur-sm p-4">
       <div
@@ -289,6 +324,9 @@ const ProfileDropdown = ({
       {showSignOutConfirm ? createPortal(confirmOverlay, document.body) : null}
     </>
   );
+=======
+  return createPortal(content, document.body);
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 };
 
 export default ProfileDropdown;

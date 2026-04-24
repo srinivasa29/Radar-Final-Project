@@ -2984,6 +2984,7 @@ body:has(.dashboard-container.trader-theme) #root {
   border-radius: 50%;
   animation: livePulse 2s infinite;
   display: inline-block;
+<<<<<<< HEAD
 }
 .notification-popup {
   position: fixed;
@@ -3004,3 +3005,6 @@ body:has(.dashboard-container.trader-theme) #root {
 
   z-index: 9999 !important;
 }
+=======
+}
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627

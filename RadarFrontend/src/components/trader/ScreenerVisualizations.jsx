@@ -105,7 +105,11 @@ export const ScreenerHeatmap = ({ results, metric = 'change', onStockClick }) =>
                 <div className="px-3 py-2 rounded-lg bg-slate-900/95 border border-slate-700 shadow-xl whitespace-nowrap">
                   <div className="text-xs font-bold text-white mb-1">{stock.name}</div>
                   <div className="space-y-0.5 text-[10px]">
+<<<<<<< HEAD
                     <div className="text-slate-300">Price: ₹{stock.price?.toFixed(2)}</div>
+=======
+                    <div className="text-slate-300">Price: â‚¹{stock.price?.toFixed(2)}</div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                     <div className={stock.change >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
                       Change: {stock.change >= 0 ? '+' : ''}{stock.change?.toFixed(2)}%
                     </div>
@@ -134,7 +138,11 @@ export const StockComparison = ({ stocks, onRemove }) => {
   }
 
   const metrics = [
+<<<<<<< HEAD
     { key: 'price', label: 'Price', format: (v) => `₹${v?.toFixed(2) || 'N/A'}` },
+=======
+    { key: 'price', label: 'Price', format: (v) => `â‚¹${v?.toFixed(2) || 'N/A'}` },
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     { key: 'change', label: 'Change %', format: (v) => `${v >= 0 ? '+' : ''}${v?.toFixed(2)}%`, colored: true },
     { key: 'rsi', label: 'RSI', format: (v) => v?.toFixed(1) || 'N/A' },
     { key: 'score', label: 'Score', format: (v) => v || 'N/A' },
@@ -166,7 +174,11 @@ export const StockComparison = ({ stocks, onRemove }) => {
                 onClick={() => onRemove(stock.symbol)}
                 className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 transition-colors"
               >
+<<<<<<< HEAD
                 ×
+=======
+                Ã—
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </button>
               <div className="font-mono font-bold text-cyan-300 text-lg mb-1">{stock.symbol}</div>
               <div className="text-xs text-slate-400 truncate">{stock.name}</div>

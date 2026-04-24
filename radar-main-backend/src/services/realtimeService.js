@@ -396,6 +396,30 @@ const startTickerInterval = () => {
         ];
 
         io.to('ticker').emit('indexUpdate', domesticIndices);
+<<<<<<< HEAD
+=======
+        
+        // Mock stock updates for common symbols if no live provider is active
+        const symbols = ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'HDFCBANK.NS', 'JINDRILL', 'AAPL', 'TSLA', 'NVDA'];
+        symbols.forEach(sym => {
+            const base = 500 + (Math.random() * 1000);
+            const price = (base + (Math.random() * 10 - 5)).toFixed(2);
+            const change = (Math.random() * 4 - 2).toFixed(2);
+            
+            const event = {
+                symbol: sym,
+                asset: sym,
+                price: Number(price),
+                change: Number(change),
+                timestamp: new Date().toISOString(),
+                source: 'mock'
+            };
+            
+            io.to('ticker').emit('price_update', event);
+            io.to(`symbol:${sym.toLowerCase()}`).emit('price_update', event);
+        });
+
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         io.to('ticker').emit('price_update', {
             type: 'indices',
             data: domesticIndices,
@@ -407,7 +431,11 @@ const startTickerInterval = () => {
             marketFeed: 'active',
             timestamp: new Date().toISOString(),
         });
+<<<<<<< HEAD
     }, 5000);
+=======
+    }, 3000); // 3 seconds for better perceived "realtime"
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 };
 
 module.exports = { initRealtimeService };

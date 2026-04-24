@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+<<<<<<< HEAD
 import { fetchNotifications, markNotificationsRead } from '../api/notificationApi';
+=======
+import { fetchNotifications, markNotificationsRead, markSingleNotificationRead } from '../api/notificationApi';
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 import { fetchUserProfile } from '../api/userApi';
 
 const getStoredUser = () => {
@@ -24,6 +28,7 @@ const buildFallbackProfile = () => {
     };
 };
 
+<<<<<<< HEAD
 const buildFallbackNotifications = () => {
     const now = Date.now();
 
@@ -52,6 +57,8 @@ const buildFallbackNotifications = () => {
     ];
 };
 
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 export const useHeaderData = () => {
     const [profile, setProfile] = useState(buildFallbackProfile);
     const [notifications, setNotifications] = useState([]);
@@ -86,16 +93,24 @@ export const useHeaderData = () => {
 
     const loadNotifications = useCallback(async () => {
         const token = localStorage.getItem('token');
+<<<<<<< HEAD
         const fallbackNotifications = buildFallbackNotifications();
 
         if (!token) {
             setNotifications(fallbackNotifications);
             return fallbackNotifications;
+=======
+
+        if (!token) {
+            setNotifications([]);
+            return [];
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         }
 
         try {
             setIsLoadingNotifications(true);
             const response = await fetchNotifications();
+<<<<<<< HEAD
             const resolvedNotifications = Array.isArray(response) && response.length > 0
                 ? response
                 : fallbackNotifications;
@@ -106,11 +121,37 @@ export const useHeaderData = () => {
             console.error('Failed to load notifications:', error);
             setNotifications(fallbackNotifications);
             return fallbackNotifications;
+=======
+            setNotifications(Array.isArray(response) ? response : []);
+            return response;
+        } catch (error) {
+            console.error('Failed to load notifications:', error);
+            setNotifications([]);
+            return [];
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         } finally {
             setIsLoadingNotifications(false);
         }
     }, []);
 
+<<<<<<< HEAD
+=======
+    const markSingleRead = useCallback(async (id) => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            // Update UI immediately (Optimistic)
+            setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n));
+            // Actual API call
+            await markSingleNotificationRead(id);
+        } catch (error) {
+            console.error('Failed to mark notification as read:', error);
+            // Optional: Revert on failure
+        }
+    }, []);
+
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     const markAllNotificationsRead = useCallback(async () => {
         const token = localStorage.getItem('token');
 
@@ -137,6 +178,16 @@ export const useHeaderData = () => {
     useEffect(() => {
         loadProfile();
         loadNotifications();
+<<<<<<< HEAD
+=======
+
+        // 10. AUTO REFRESH: Poll notifications every 45s
+        const pollInterval = setInterval(() => {
+            loadNotifications();
+        }, 45000);
+
+        return () => clearInterval(pollInterval);
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     }, [loadProfile, loadNotifications]);
 
     const userInitial = useMemo(() => {
@@ -158,6 +209,11 @@ export const useHeaderData = () => {
         isMarkingNotifications,
         reloadProfile: loadProfile,
         reloadNotifications: loadNotifications,
+<<<<<<< HEAD
         markAllNotificationsRead
+=======
+        markAllNotificationsRead,
+        markSingleRead
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     };
 };

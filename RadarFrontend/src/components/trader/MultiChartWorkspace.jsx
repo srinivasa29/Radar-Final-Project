@@ -18,6 +18,7 @@ import AdvancedTradingChart from './AdvancedTradingChart';
 
 
 const LAYOUTS = [
+<<<<<<< HEAD
   { id: '1x1', label: '1 Chart', rows: 1, cols: 1, icon: '⬜' },
   { id: '1x2', label: '1×2', rows: 1, cols: 2, icon: '▯' },
   { id: '2x1', label: '2×1', rows: 2, cols: 1, icon: '▭' },
@@ -27,6 +28,17 @@ const LAYOUTS = [
   { id: '2x3', label: '2×3', rows: 2, cols: 3, icon: '⊡' },
   { id: '3x2', label: '3×2', rows: 3, cols: 2, icon: '⊟' },
   { id: '3x3', label: '3×3', rows: 3, cols: 3, icon: '⊞' },
+=======
+  { id: '1x1', label: '1 Chart', rows: 1, cols: 1, icon: 'â¬œ' },
+  { id: '1x2', label: '1Ã—2', rows: 1, cols: 2, icon: 'â–¯' },
+  { id: '2x1', label: '2Ã—1', rows: 2, cols: 1, icon: 'â–­' },
+  { id: '2x2', label: '2Ã—2', rows: 2, cols: 2, icon: 'âŠž' },
+  { id: '1x3', label: '1Ã—3', rows: 1, cols: 3, icon: 'â˜°' },
+  { id: '3x1', label: '3Ã—1', rows: 3, cols: 1, icon: 'â‹®' },
+  { id: '2x3', label: '2Ã—3', rows: 2, cols: 3, icon: 'âŠ¡' },
+  { id: '3x2', label: '3Ã—2', rows: 3, cols: 2, icon: 'âŠŸ' },
+  { id: '3x3', label: '3Ã—3', rows: 3, cols: 3, icon: 'âŠž' },
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 ];
 
 const DEFAULT_SYMBOLS = ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK', 'SBIN', 'BHARTIARTL', 'ITC', 'KOTAKBANK'];
@@ -138,7 +150,11 @@ const MultiChartWorkspace = () => {
           </h1>
           {syncEnabled && (
             <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-semibold border border-cyan-400/30">
+<<<<<<< HEAD
               🔗 Sync Enabled
+=======
+              ðŸ”— Sync Enabled
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             </span>
           )}
         </div>
@@ -262,7 +278,11 @@ const MultiChartWorkspace = () => {
                               {workspace.name}
                             </div>
                             <div className="text-xs text-slate-500">
+<<<<<<< HEAD
                               {workspace.layout} • {workspace.charts.length} charts
+=======
+                              {workspace.layout} â€¢ {workspace.charts.length} charts
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                             </div>
                           </button>
                           <button

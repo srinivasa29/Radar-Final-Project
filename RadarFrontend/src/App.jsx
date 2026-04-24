@@ -14,8 +14,13 @@ import {
   ReportsExportPage,
   ProfilePage,
   SettingsPage,
+<<<<<<< HEAD
   SupportPage,
   InvestorFilingsPage,
+=======
+  InvestorFilingsPage,
+  HelpSupportPage,
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 } from './pages/ContractPages';
 
 
@@ -26,7 +31,10 @@ const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const TraderStockPage = lazy(() => import('./pages/TraderStockPage'));
+<<<<<<< HEAD
 const TradeTerminalPage = lazy(() => import('./pages/TradeTerminalPage'));
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const RealtimeDemoPage = lazy(() => import('./pages/RealtimeDemoPage'));
 const SpecShowcasePage = lazy(() => import('./pages/SpecShowcase'));
@@ -34,8 +42,12 @@ const Onboarding = lazy(() => import('./pages/Onboarding'));
 const InvestorStockPage = lazy(() => import('./pages/InvestorStockPage'));
 const MarketResearchDashboard = lazy(() => import('./pages/MarketResearchDashboard'));
 const ScreenerPage = lazy(() => import('./pages/ScreenerPage'));
+<<<<<<< HEAD
 const TraderProfilePage = lazy(() => import('./pages/traderProfile/TraderProfilePage'));
 const MinimalChartPage = lazy(() => import('./pages/MinimalChartPage'));
+=======
+import InvestorAdvancedCharts from './pages/InvestorAdvancedCharts';
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 
 const AppLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-[#020617] text-[#E2E8F0]">
@@ -121,8 +133,11 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/auth/oauth/callback" element={<OAuthCallbackRoute />} />
             <Route path="/stocks/:symbol" element={<TraderStockPage />} />
+<<<<<<< HEAD
             <Route path="/trade/:symbol" element={<TradeTerminalPage />} />
             <Route path="/chart/:symbol" element={<MinimalChartPage />} />
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             <Route path="/investor-stock/:symbol" element={<InvestorStockPage />} />
             <Route path="/asset/:symbol" element={<AssetAliasRoute />} />
             <Route path="/trader/momentum" element={<DashboardAliasRoute mode="TRADER" module="DASHBOARD" />} />
@@ -137,16 +152,26 @@ function App() {
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/alerts" element={<AlertsPage />} />
             <Route path="/reports/export" element={<ReportsExportPage />} />
+<<<<<<< HEAD
             <Route path="/profile" element={<TraderProfilePage />} />
             <Route path="/trader-profile" element={<TraderProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/support" element={<SupportPage />} />
+=======
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/help" element={<HelpSupportPage />} />
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/health" element={<Navigate to="/admin" replace />} />
             <Route path="/demo" element={<RealtimeDemoPage />} />
             <Route path="/research-dashboard" element={<MarketResearchDashboard />} />
             <Route path="/spec/components" element={<SpecShowcasePage />} />
             <Route path="/onboarding" element={<Onboarding />} />
+<<<<<<< HEAD
+=======
+            <Route path="/advanced-charts" element={<InvestorAdvancedCharts />} />
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             <Route path="/404" element={<RouteStatusPage title="404 - Not Found" message="The page you requested does not exist or may have moved." actionTo="/" actionLabel="Return Home" />} />
             <Route path="/500" element={<RouteStatusPage title="500 - Server Error" message="Something went wrong while processing your request. Please try again." actionTo="/" actionLabel="Return Home" />} />
             <Route path="*" element={<Navigate to="/404" replace />} />

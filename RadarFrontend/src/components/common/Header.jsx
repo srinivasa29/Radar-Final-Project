@@ -45,6 +45,10 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
         isLoadingNotifications,
         isMarkingNotifications,
         markAllNotificationsRead,
+<<<<<<< HEAD
+=======
+        markSingleRead
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     } = useHeaderData();
 
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -62,7 +66,11 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
         localStorage.removeItem("token");
         localStorage.removeItem("userMode");
         localStorage.removeItem("mode");
+<<<<<<< HEAD
         window.location.replace("/");
+=======
+        navigate("/", { state: { skipPreloader: true } });
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     };
 
     useEffect(() => {
@@ -135,6 +143,7 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
 
     return (
         <>
+<<<<<<< HEAD
             <header className="navbar rounded-2xl mx-6 lg:mx-10 border border-white/40 shadow-xl relative z-[110] bg-white/60 backdrop-blur-xl px-6 py-3 flex items-center justify-between">
                 {/* Left Side: Logo & Brand */}
                 <div className="flex items-center gap-4 shrink-0">
@@ -146,6 +155,18 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
 
                 {/* Center: Navigation Links */}
                 <div className="hidden lg:flex items-center gap-8 ml-8">
+=======
+            <header className="navbar rounded-[32px] mx-auto border border-white/40 shadow-xl relative z-[110] bg-white/95 backdrop-blur-xl px-10 py-3 flex items-center justify-between w-[96%] max-w-[1500px] mt-6">
+                {/* Left Side: Logo & Brand */}
+                <div className="flex items-center gap-3 shrink-0">
+                    <div className="w-10 h-10 flex items-center justify-center overflow-hidden">
+                        <img src="/radar-logo-final.jpg" alt="Radar Logo" className="w-10 h-10 rounded-full object-cover shadow-sm" />
+                    </div>
+                    <span className="brand-name text-xl font-black tracking-tight" style={{ color: '#3E84F6' }}>RADAR</span>
+                </div>
+
+                <div className="flex items-center gap-8 ml-4">
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                     {[
                         { id: 'DASHBOARD', label: 'Dashboard', icon: LayoutDashboard },
                         { id: 'WATCHLIST', label: 'Watchlist', icon: Star },
@@ -155,10 +176,17 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
                         <button
                             key={item.id}
                             onClick={() => setActiveModule ? setActiveModule(item.id) : navigate('/dashboard?module=' + item.id)}
+<<<<<<< HEAD
                             className={`flex items-center gap-2 text-sm font-black tracking-tight transition-all duration-300 ${activeModule === item.id ? 'scale-110 opacity-100' : 'opacity-100 hover:scale-105'}`}
                             style={{ color: '#3E84F6' }}
                         >
                             <item.icon size={18} strokeWidth={2.5} />
+=======
+                            className="flex items-center gap-2.5 text-[13px] font-black tracking-tight transition-all duration-300 opacity-100 hover:text-blue-700"
+                            style={{ color: '#3E84F6' }}
+                        >
+                            <item.icon size={20} strokeWidth={2.5} />
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                             {item.label}
                         </button>
                     ))}
@@ -167,9 +195,15 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
                 {/* Right Side: Search & Actions */}
                 <div className="flex items-center gap-4 flex-1 justify-end">
                     {/* Compact Search Bar */}
+<<<<<<< HEAD
                     <div className="relative hidden md:block max-w-[280px] w-full" ref={searchContainerRef}>
                         <div className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'rgba(62, 132, 246, 0.5)' }}>
                             <Search size={16} />
+=======
+                    <div className="relative hidden md:block max-w-[320px] w-full" ref={searchContainerRef}>
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
+                            <Search size={18} strokeWidth={2.5} />
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                         </div>
                         <input
                             type="text"
@@ -236,6 +270,7 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
                                 {unreadCount > 0 && <span className="absolute top-1 right-1 min-w-[16px] h-[16px] bg-rose-500 rounded-full text-white text-[9px] flex items-center justify-center font-bold px-1">{unreadCount}</span>}
                             </button>
                             {isNotificationsOpen && (
+<<<<<<< HEAD
                                 <div className="absolute right-0 top-10 w-80 bg-white border border-blue-100 rounded-xl shadow-2xl py-2 z-[100] animate-in fade-in slide-in-from-top-1">
                                     <div className="px-4 py-2 border-b flex justify-between items-center bg-blue-50/50">
                                         <h3 className="font-bold text-xs text-blue-900">Notifications</h3>
@@ -251,6 +286,33 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
                                                 </div>
                                             </div>
                                         )) : <div className="p-8 text-center text-xs text-slate-400">No new notifications</div>}
+=======
+                                <div className="absolute right-0 top-10 w-80 bg-white border border-blue-100 rounded-xl shadow-2xl py-0 z-[120] animate-in fade-in slide-in-from-top-1 overflow-hidden">
+                                    <div className="px-4 py-3 border-b flex justify-between items-center bg-blue-50/50">
+                                        <h3 className="font-bold text-[11px] uppercase tracking-wider text-blue-900">Notifications</h3>
+                                        <button onClick={markAllNotificationsRead} className="text-[10px] font-bold text-blue-600 hover:underline">Mark all read</button>
+                                    </div>
+                                    <div className="max-h-80 overflow-y-auto">
+                                        {notifications && notifications.length > 0 ? notifications.map((n, i) => (
+                                            <div 
+                                                key={i} 
+                                                onClick={() => markSingleRead(n._id)}
+                                                className={`px-4 py-3 border-b border-blue-50 cursor-pointer transition-colors hover:bg-blue-50/50 flex gap-3 ${!n.read ? 'bg-blue-50/30' : ''}`}
+                                            >
+                                                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-blue-500' : 'bg-transparent'}`} />
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-[11px] font-black text-slate-800 truncate leading-snug">{n.title}</p>
+                                                    <p className="text-[10px] text-slate-600 line-clamp-2 mt-0.5 leading-normal">{n.message}</p>
+                                                    <p className="text-[9px] text-slate-400 mt-1.5 uppercase font-bold tracking-tight">{formatNotificationTime(n.timestamp || n.createdAt)}</p>
+                                                </div>
+                                            </div>
+                                        )) : (
+                                            <div className="p-10 text-center flex flex-col items-center justify-center opacity-40">
+                                                <Bell size={24} className="mb-2 text-slate-300" />
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No new notifications</p>
+                                            </div>
+                                        )}
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                                     </div>
                                 </div>
                             )}
@@ -261,6 +323,7 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
                                 {userInitial}
                             </div>
                             {isProfileOpen && (
+<<<<<<< HEAD
                                 <div className="absolute right-0 top-11 w-64 bg-white border border-blue-100 rounded-xl shadow-2xl py-2 z-[100] animate-in fade-in slide-in-from-top-1">
                                     <div className="px-4 py-3 border-b bg-blue-50/50">
                                         <p className="text-xs font-bold text-blue-900">{profile?.username || 'User'}</p>
@@ -279,11 +342,72 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
 
                                             <div 
                                                 className="relative w-full h-10 rounded-full cursor-pointer flex items-center p-1 transition-all duration-300 shadow-inner group bg-slate-100 border border-slate-200"
+=======
+                                <div className="absolute right-0 top-12 w-[320px] bg-white border border-slate-100 rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2">
+                                    {/* Header Section with Avatar */}
+                                    <div className="px-6 py-5 bg-[#F8FAFF] flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4F46E5] to-[#7C3AED] flex items-center justify-center text-white font-black text-lg shadow-lg shadow-blue-500/20 flex-shrink-0">
+                                            {userInitial}
+                                        </div>
+                                        <div className="overflow-hidden">
+                                            <p className="text-base font-black text-slate-900 leading-tight">{profile?.username || 'User'}</p>
+                                            <p className="text-xs text-slate-500 font-bold mt-1">{profile?.email || 'user@radar.com'}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="h-px bg-slate-100 w-full"></div>
+
+                                    {/* Menu Links */}
+                                    <div className="py-2.5 bg-white">
+                                        <Link 
+                                            to="/profile" 
+                                            onClick={() => setIsProfileOpen(false)} 
+                                            className="group flex items-center gap-4 px-6 py-3 text-sm font-bold text-[#475569] hover:bg-slate-50 transition-all"
+                                        >
+                                            <User size={18} className="text-[#64748b]" /> My Profile
+                                        </Link>
+                                        <Link 
+                                            to="/settings" 
+                                            onClick={() => setIsProfileOpen(false)} 
+                                            className="group flex items-center gap-4 px-6 py-3 text-sm font-bold text-[#475569] hover:bg-slate-50 transition-all"
+                                        >
+                                            <Settings size={18} className="text-[#64748b]" /> Settings
+                                        </Link>
+                                        <Link 
+                                            to="/help" 
+                                            onClick={() => setIsProfileOpen(false)} 
+                                            className="group flex items-center gap-4 px-6 py-3 text-sm font-bold text-[#475569] hover:bg-slate-50 transition-all"
+                                        >
+                                            <HelpCircle size={18} className="text-[#64748b]" /> Help & Support
+                                        </Link>
+                                    </div>
+
+                                    <div className="h-px bg-slate-50 w-full"></div>
+
+                                    {/* Interface Toggle Section */}
+                                    <div className="px-6 py-6 bg-[#F8FAFC]">
+                                        <p className="text-[10px] font-black text-[#94A3B8] uppercase tracking-[0.1em] text-center mb-4">
+                                            CHOOSE YOUR INTERFACE
+                                        </p>
+                                        <div className="relative bg-[#E2E8F0]/50 p-1.5 rounded-full flex items-center h-[48px]">
+                                            <button 
+                                                onClick={() => {
+                                                    localStorage.setItem('mode', 'INVESTOR');
+                                                    if (onToggleMode) onToggleMode();
+                                                    setIsProfileOpen(false);
+                                                }}
+                                                className="relative z-10 flex-1 flex items-center justify-center gap-2 h-full bg-white rounded-full shadow-md text-xs font-black text-[#2563EB]"
+                                            >
+                                                <Activity size={16} /> Investor
+                                            </button>
+                                            <button 
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                                                 onClick={() => {
                                                     localStorage.setItem('mode', 'TRADER');
                                                     if (onToggleMode) onToggleMode();
                                                     setIsProfileOpen(false);
                                                 }}
+<<<<<<< HEAD
                                             >
                                                 {/* Animated Slide Background */}
                                                 <div 
@@ -309,6 +433,29 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
                                             </button>
                                         </div>
                                     </div>
+=======
+                                                className="relative z-10 flex-1 flex items-center justify-center gap-2 h-full text-xs font-bold text-[#94A3B8]"
+                                            >
+                                                <TrendingUp size={16} /> Trader
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="h-px bg-slate-100 w-full"></div>
+
+                                    {/* Footer / Sign Out */}
+                                    <div className="bg-[#F8FAFF]">
+                                        <button 
+                                            onClick={() => {
+                                                setIsProfileOpen(false);
+                                                setShowLogoutModal(true);
+                                            }} 
+                                            className="w-full flex items-center gap-4 px-6 py-4 text-sm font-black text-slate-900 hover:bg-blue-50 transition-all"
+                                        >
+                                            <LogOut size={18} className="text-[#2563EB]" /> Sign Out
+                                        </button>
+                                    </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                                 </div>
                             )}
                         </div>
@@ -317,6 +464,7 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
             </header>
 
             {showLogoutModal && (
+<<<<<<< HEAD
                 <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#0B0E14]/90 backdrop-blur-sm p-4">
                     <div className="relative w-full max-w-[400px] rounded-[24px] bg-[#1A1D24] p-8 shadow-2xl border border-white/5">
                         <div className="flex flex-col items-center">
@@ -346,6 +494,16 @@ const Header = ({ activeModule, setActiveModule, onToggleMode }) => {
                                     Yes, Sign Out
                                 </button>
                             </div>
+=======
+                <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center">
+                        <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4"><LogOut size={32} /></div>
+                        <h3 className="text-xl font-bold mb-2">Sign Out?</h3>
+                        <p className="text-sm text-slate-500 mb-6">Are you sure you want to log out of RADAR?</p>
+                        <div className="flex gap-3">
+                            <button onClick={() => setShowLogoutModal(false)} className="flex-1 py-3 bg-slate-100 rounded-xl font-bold">Cancel</button>
+                            <button onClick={handleLogout} className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold">Logout</button>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                         </div>
                     </div>
                 </div>

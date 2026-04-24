@@ -14,6 +14,7 @@ const fallbackTickers = [
 ];
 
 const investorClasses = {
+<<<<<<< HEAD
     container: "w-full relative overflow-hidden py-3 select-none bg-transparent",
     content: "flex gap-16 w-max animate-marquee hover:[animation-play-state:paused] items-center",
     symbol: "text-[10px] font-bold text-[#1F3D2B]/60 tracking-widest",
@@ -28,6 +29,22 @@ const investorClasses = {
     style: {
         maskImage: "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
         WebkitMaskImage: "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
+=======
+    container: "w-full relative overflow-hidden py-4 select-none bg-transparent",
+    content: "flex gap-20 w-max animate-marquee hover:[animation-play-state:paused] items-center",
+    symbol: "text-[10px] font-black text-slate-400 tracking-[0.15em] uppercase mb-1 block",
+    value: "text-sm font-black text-slate-800 font-mono",
+    positive: "text-emerald-500 bg-emerald-50 border-emerald-100",
+    negative: "text-rose-500 bg-rose-50 border-rose-100",
+    neutral: "text-slate-400 bg-slate-50 border-slate-200",
+    loading: "w-full flex justify-center items-center py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest animate-pulse",
+    error: "w-full flex justify-center items-center py-2 text-[10px] font-black text-rose-500 uppercase tracking-widest py-4",
+    item: "flex items-center gap-4",
+    divider: "h-8 w-[1px] bg-slate-200 -skew-x-[24deg] ml-10 opacity-60",
+    style: {
+        maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)",
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     },
 };
 
@@ -81,7 +98,11 @@ export default function TickerTape({ variant = "dark" }) {
         load();
     }, []);
 
+<<<<<<< HEAD
     const duplicatedItems = useMemo(() => [...items, ...items, ...items], [items]);
+=======
+    const duplicatedItems = useMemo(() => [...items, ...items, ...items, ...items], [items]);
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 
     return (
         <div className={classes.container} style={classes.style}>
@@ -92,13 +113,21 @@ export default function TickerTape({ variant = "dark" }) {
                 </>
             )}
 
+<<<<<<< HEAD
             {isLoading && <div className={classes.loading}>Loading market feed...</div>}
+=======
+            {isLoading && <div className={classes.loading}>Connection sequence initiated...</div>}
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             {error && !isLoading && <div className={classes.error}>Connection sequence failed. Showing stale data.</div>}
 
             <motion.div
                 className={classes.content}
                 animate={{ x: ["0%", "-50%"] }}
+<<<<<<< HEAD
                 transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
+=======
+                transition={{ repeat: Infinity, ease: "linear", duration: 35 }}
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             >
                 {duplicatedItems.map((item, index) => {
                     const isPositive = item.change.startsWith("+");
@@ -110,11 +139,21 @@ export default function TickerTape({ variant = "dark" }) {
                         <div key={`${item.symbol}-${index}`} className={classes.item}>
                             <div className="flex flex-col leading-none">
                                 <span className={classes.symbol}>{item.symbol}</span>
+<<<<<<< HEAD
                                 <span className={classes.value}>{item.value}</span>
                             </div>
                             <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeClass}`}>
                                 <span>{direction}</span>
                                 <span>{item.change}</span>
+=======
+                                <div className="flex items-center gap-3">
+                                    <span className={classes.value}>{item.value}</span>
+                                    <div className={`flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded border ${badgeClass}`}>
+                                        <span className="text-[7px]">{direction}</span>
+                                        <span>{item.change}</span>
+                                    </div>
+                                </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                             </div>
                             {classes.divider ? <div className={classes.divider}></div> : null}
                         </div>

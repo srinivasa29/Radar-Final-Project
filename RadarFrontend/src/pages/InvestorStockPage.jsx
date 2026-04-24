@@ -42,8 +42,14 @@ import {
 import Header from '../components/common/Header';
 import './InvestorStockPage.css';
 import { useEffect } from 'react';
+<<<<<<< HEAD
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+=======
+import { useParams, Link } from 'react-router-dom';
+import axios from 'axios';
+import { useSocket } from '../hooks/useSocket';
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 
 const chartData = [
   { time: '9:30', price: 480, open: 470, high: 490, low: 465, close: 480 },
@@ -62,6 +68,39 @@ const financialsData = [
   { name: '2024', revenue: 1708, profit: 245 },
 ];
 
+<<<<<<< HEAD
+=======
+const METRIC_DESCRIPTIONS = {
+    'Valuation Metrics': 'Key ratios used to determine if a stock is fairly priced, undervalued, or overvalued.',
+    'Profitability': 'Metrics measuring the company\'s ability to generate earnings relative to its revenue, operating costs, and balance sheet assets.',
+    'Growth Profile': 'Historical performance indicators showing the expansion of revenue, profit, and earnings over time.',
+    'Financial Health': 'Indicators of the company\'s solvency, liquidity, and ability to manage debt obligations.',
+    'Shareholder Metrics': 'Data points specific to shareholder value, including earnings per share and dividend yields.',
+    'Peer Comparison': 'Relative analysis comparing company performance against industry-wide averages.',
+    'P/E (TTM)': 'Price-to-Earnings ratio, indicating how much investors are willing to pay per rupee of earnings.',
+    'Price to Book': 'Compares a firm\'s market value to its book value.',
+    'EV / EBITDA': 'Enterprise Value to EBITDA, used to determine the core operational value of a company.',
+    'PEG Ratio': 'P/E ratio divided by the growth rate of its earnings.',
+    'ROE': 'Return on Equity, measuring profitability relative to shareholder equity.',
+    'ROCE': 'Return on Capital Employed, measuring efficiency in using capital.',
+    'Operating Margin': 'Percentage of revenue left after paying for variable costs of production.',
+    'Net Profit Margin': 'Percentage of revenue left after all expenses have been deducted.',
+    'Rev Growth (3Y)': 'Compounded annual growth rate of revenue over the last 3 years.',
+    'Profit Growth': 'Year-over-year growth in net profit.',
+    'EPS Growth': 'Year-over-year growth in Earnings Per Share.',
+    'Debt to Equity': 'Ratio of total liabilities to shareholder equity.',
+    'Int. Coverage': 'Measures how easily a company can pay interest on its outstanding debt.',
+    'Current Ratio': 'Measures a company\'s ability to pay short-term obligations.',
+    'EPS (TTM)': 'Earnings per share over the last twelve months.',
+    'Dividend Yield': 'Annual dividend payment divided by the stock price.',
+    'Book Value': 'The net asset value of a company divided by its outstanding shares.',
+    'P/E Ratio': 'Standard Price-to-Earnings comparison.',
+    'Profit Margin': 'Net efficiency in converting revenue to profit.',
+    'Rev Growth': 'Yearly revenue expansion comparison.'
+};
+
+
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 const InvestorStockPage = () => {
   const { symbol = 'JINDRILL' } = useParams();
   const [activeTab, setActiveTab] = useState('Overview');
@@ -78,6 +117,7 @@ const InvestorStockPage = () => {
   const [newsImpactData, setNewsImpactData] = useState(null);
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(true);
   const [errorMetrics, setErrorMetrics] = useState(null);
+<<<<<<< HEAD
 
   useEffect(() => {
     const fullBackground = 'linear-gradient(180deg, #f0f9ff 0%, #e1effe 100%)';
@@ -93,6 +133,112 @@ const InvestorStockPage = () => {
       document.body.style.backgroundSize = '';
     };
   }, []);
+=======
+  
+  // Real-time states
+  const [livePrice, setLivePrice] = useState(562.90);
+  const [liveChange, setLiveChange] = useState({ val: 77.00, pct: 15.84 });
+  const [lastUpdate, setLastUpdate] = useState(new Date().toLocaleTimeString());
+
+  // --- Socket.io Integration ---
+  const { on, isConnected } = useSocket(['ticker', `symbol:${symbol.toLowerCase()}`]);
+
+  // --- Intelligence Insights System ---
+  const [term, setTerm] = useState('medium');
+  const [insightsData, setInsightsData] = useState(null);
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [insightsCache, setInsightsCache] = useState({});
+
+  const INSIGHTS_TOOLTIPS = {
+    trendSignals: "Analysis of price trajectory using moving average crossovers and price action patterns.",
+    momentumSignals: "Measures the velocity of price changes to identify overbought/oversold conditions and trend strength.",
+    volatilityRisk: "Evaluates price fluctuations and potential risk using ATR and Standard Deviation metrics.",
+    keyLevels: "Identification of major support and resistance zones based on historical volume and price pivots.",
+    volumeInsights: "Analyzes trading volume relative to historical averages to confirm trend conviction.",
+    priceBehavior: "Deep dive into intraday price patterns, gaps, and structural formation.",
+    marketParticipation: "Estimates the balance between institutional and retail activity based on delivery data.",
+    trendAlignment: "Checks if the current trend is consistent across different timeframes (Synchronization).",
+    signalConsistency: "Measures how reliably signals have been sustained over recent trading sessions.",
+    riskAlerts: "Critical warnings regarding overextension, liquidity, or extreme volatility.",
+    recentChanges: "Chronological log of major technical milestones and signal triggers.",
+    indicatorDetail: "Specific technical metric used to analyze current price behavior and momentum."
+  };
+
+  const FUNDAMENTALS_TOOLTIPS = {
+    companyFundamentals: "Core financial health indicators providing a snapshot of the company's valuation and operational efficiency.",
+    detailedAnalysis: "Granular breakdown of financial performance across valuation, profitability, and shareholder returns.",
+    valuationMetrics: "Comparative ratios used to determine if a stock is overvalued or undervalued relative to its earnings and assets.",
+    profitability: "Measures the company's ability to generate earnings relative to its revenue, operating costs, and other expenses.",
+    efficiency: "Evaluates how effectively the company uses its assets and capital to generate returns.",
+    shareholderMetrics: "Key data points specifically relevant to equity holders, including dividends and per-share earnings.",
+    peerComparison: "Benchmarks the company against its closest industry rivals to identify relative strength or weakness."
+  };
+
+  const NEWS_TOOLTIPS = {
+    upcomingEvents: "Future milestones including earnings calls, board meetings, and corporate actions that may impact stock price.",
+    latestNews: "Real-time coverage of company developments, industry trends, and macroeconomic factors affecting the sector."
+  };
+
+
+  useEffect(() => {
+    // Background is now handled via CSS for better stability
+    
+    on('price_update', (event) => {
+      if (event.symbol === symbol || event.asset === symbol) {
+        if (event.price) {
+          setLivePrice(event.price);
+          setLastUpdate(new Date().toLocaleTimeString());
+        }
+        if (event.change !== null && event.change !== undefined) {
+          setLiveChange({ val: (event.price * (event.change / 100)).toFixed(2), pct: event.change });
+        }
+      }
+    });
+
+    return () => {
+      // Clean up body styles if any were set by other pages
+      document.body.style.backgroundColor = '';
+      document.body.style.backgroundImage = '';
+    };
+  }, [symbol]);
+
+
+
+  useEffect(() => {
+    const fetchInsightsData = async () => {
+      const cacheKey = `${symbol}-${term}`;
+      if (insightsCache[cacheKey]) {
+        setInsightsData(insightsCache[cacheKey]);
+        return;
+      }
+
+      setInsightsLoading(true);
+      try {
+        const response = await fetch(`/api/stocks/${symbol}/signals?term=${term}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const resData = await response.json();
+        
+        if (resData.success) {
+          setInsightsData(resData.data);
+          setInsightsCache(prev => ({ ...prev, [cacheKey]: resData.data }));
+        } else {
+          console.warn("Insights API returned success:false", resData);
+        }
+      } catch (err) {
+        console.error("Failed to fetch insights:", err);
+      } finally {
+        setInsightsLoading(false);
+      }
+    };
+
+    if (activeTab === 'Signals') {
+      fetchInsightsData();
+    }
+  }, [symbol, term, activeTab]);
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 
   useEffect(() => {
     const fetchDynamicData = async () => {
@@ -256,17 +402,32 @@ const InvestorStockPage = () => {
                 >
                   <Bookmark size={18} />
                 </button>
+<<<<<<< HEAD
                 <button className="advanced-chart-btn">
                   <TrendingUp size={16} />
                   Advanced Chart
                 </button>
+=======
+                <Link to={`/advanced-charts?symbol=${symbol}`} className="advanced-chart-btn">
+                  <TrendingUp size={16} />
+                  Advanced Chart
+                </Link>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </div>
             </div>
 
             <div className="card-price-section">
+<<<<<<< HEAD
               <span className="card-price-main">â‚¹562.90</span>
               <span className="card-price-change">+77.00 (15.84%)</span>
               <span className="card-price-time">Live â€¢ Real-time Data</span>
+=======
+              <span className="card-price-main">₹{livePrice.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+              <span className={`card-price-change ${liveChange.pct >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {liveChange.pct >= 0 ? '+' : ''}{Number(liveChange.val).toFixed(2)} ({liveChange.pct}%)
+              </span>
+              <span className="card-price-time">Live • Updated at {lastUpdate}</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             </div>
 
             <div className="chart-body">
@@ -281,7 +442,12 @@ const InvestorStockPage = () => {
             </div>
 
             <div className="card-footer-controls">
+<<<<<<< HEAD
               <div className="time-filters-group">
+=======
+              <div className="time-filters-container">
+                <div className="time-filters-group">
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                 {['1D', '1W', '1M', '3M', '6M', '1Y', '5Y', 'All'].map(filter => (
                   <button 
                     key={filter}
@@ -291,6 +457,10 @@ const InvestorStockPage = () => {
                     {filter}
                   </button>
                 ))}
+<<<<<<< HEAD
+=======
+                </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </div>
 
               <div className="control-divider"></div>
@@ -355,15 +525,26 @@ const InvestorStockPage = () => {
                         <span className="po-range-label">Today's Range</span>
                       </div>
                       <div className="po-visual-track-wrap">
+<<<<<<< HEAD
                         <span className="po-limit-price">â‚¹485.00</span>
                         <div className="po-track-main today-gradient">
                           <div className="po-marker-assembly" style={{ left: '85%' }}>
                             <div className="po-floating-price">â‚¹562.90 â€¢ Current</div>
+=======
+                        <span className="po-limit-price">Ã¢â€šÂ¹485.00</span>
+                        <div className="po-track-main today-gradient">
+                          <div className="po-marker-assembly" style={{ left: '85%' }}>
+                            <div className="po-floating-price">₹{livePrice.toFixed(2)} • Current</div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                             <div className="po-marker-v-line"></div>
                             <div className="po-marker-dot"></div>
                           </div>
                         </div>
+<<<<<<< HEAD
                         <span className="po-limit-price">â‚¹570.00</span>
+=======
+                        <span className="po-limit-price">Ã¢â€šÂ¹570.00</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                       </div>
                     </div>
 
@@ -373,13 +554,21 @@ const InvestorStockPage = () => {
                         <span className="po-context-indicator">Near 52W High</span>
                       </div>
                       <div className="po-visual-track-wrap">
+<<<<<<< HEAD
                         <span className="po-limit-price">â‚¹212.10</span>
+=======
+                        <span className="po-limit-price">Ã¢â€šÂ¹212.10</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                         <div className="po-track-main fiftytwo-gradient">
                           <div className="po-marker-assembly" style={{ left: '92%' }}>
                             <div className="po-marker-dot marker-muted"></div>
                           </div>
                         </div>
+<<<<<<< HEAD
                         <span className="po-limit-price">â‚¹585.00</span>
+=======
+                        <span className="po-limit-price">Ã¢â€šÂ¹585.00</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                       </div>
                     </div>
                   </div>
@@ -389,14 +578,22 @@ const InvestorStockPage = () => {
                       <div className="ps-icon-circle bg-blue-soft"><Clock size={16} /></div>
                       <div className="ps-data">
                         <span className="ps-label">Open</span>
+<<<<<<< HEAD
                         <span className="ps-value">â‚¹492.10</span>
+=======
+                        <span className="ps-value">Ã¢â€šÂ¹492.10</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                       </div>
                     </div>
                     <div className="po-stat-card-luxury">
                       <div className="ps-icon-circle bg-green-soft"><TrendingUp size={16} /></div>
                       <div className="ps-data">
                         <span className="ps-label">Prev Close</span>
+<<<<<<< HEAD
                         <span className="ps-value">â‚¹485.90</span>
+=======
+                        <span className="ps-value">Ã¢â€šÂ¹485.90</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                       </div>
                     </div>
                     <div className="po-stat-card-luxury">
@@ -410,7 +607,11 @@ const InvestorStockPage = () => {
                       <div className="ps-icon-circle bg-orange-soft"><ShieldCheck size={16} /></div>
                       <div className="ps-data">
                         <span className="ps-label">Circuit Range</span>
+<<<<<<< HEAD
                         <span className="ps-value text-sm-luxury">â‚¹450 â€“ â‚¹675</span>
+=======
+                        <span className="ps-value text-sm-luxury">Ã¢â€šÂ¹450 Ã¢â‚¬â€œ Ã¢â€šÂ¹675</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                       </div>
                     </div>
                   </div>
@@ -419,7 +620,11 @@ const InvestorStockPage = () => {
 
               <div className="key-metrics-compact-row animate-fade-in">
                 {[
+<<<<<<< HEAD
                   { label: 'Market Cap', val: 'â‚¹1,708 Cr', tag: 'Mid Cap', hint: 'Top 250 Company', type: 'neutral' },
+=======
+                  { label: 'Market Cap', val: 'Ã¢â€šÂ¹1,708 Cr', tag: 'Mid Cap', hint: 'Top 250 Company', type: 'neutral' },
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   { label: 'P/E Ratio', val: '9.2', tag: 'Undervalued', hint: 'Below Industry Avg', type: 'green' },
                   { label: 'ROE', val: '14.7%', tag: 'Strong', hint: 'Consistent returns', type: 'green' },
                   { label: 'Debt to Equity', val: '0.12', tag: 'Low Risk', hint: 'Very healthy', type: 'green' },
@@ -505,7 +710,11 @@ const InvestorStockPage = () => {
                               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dy={10} />
                               <Tooltip cursor={{fill: '#f8fafc', radius: 4}} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 15px rgba(0,0,0,0.05)' }} />
                               <Bar 
+<<<<<<< HEAD
                                 name={finTab === 'Shareholding' ? 'Ownership %' : `${finTab} (â‚¹ Cr)`} 
+=======
+                                name={finTab === 'Shareholding' ? 'Ownership %' : `${finTab} (Ã¢â€šÂ¹ Cr)`} 
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                                 dataKey="value" 
                                 fill={finTab === 'Profit' ? '#10b981' : '#3b82f6'} 
                                 radius={[6, 6, 0, 0]} 
@@ -620,6 +829,7 @@ const InvestorStockPage = () => {
 
           {activeTab === 'Signals' && (
             <div className="signals-tab-content animate-fade-in">
+<<<<<<< HEAD
               {}
               <div className="signal-summary-card shadow-premium">
                 <div className="ss-top-row">
@@ -943,6 +1153,378 @@ const InvestorStockPage = () => {
                     <span>This interpretation is based on historical technical data and algorithmic analysis. Not financial advice.</span>
                   </div>
                 </div>
+=======
+              {/* Overall Sentiment Summary */}
+              <div className="overall-sentiment-summary-card shadow-premium mb-10">
+                <div className="oss-header">
+                  <div className="oss-title-group">
+                    <span className="oss-label-top">CURRENT SENTIMENT</span>
+                    <h2 className={`oss-main-status ${insightsData?.overallSentiment?.label?.toLowerCase().includes('bullish') ? 'text-green-500' : 'text-red-500'}`}>
+                      {insightsData?.overallSentiment?.label || 'Technical Neutral'}
+                    </h2>
+                  </div>
+                  <div className="oss-score-box">
+                    <div className="oss-score-circle">
+                      <span className="oss-score-num">{insightsData?.overallSentiment?.score || '0.0'}</span>
+                      <span className="oss-score-den">/10</span>
+                    </div>
+                    <span className={`oss-setup-badge ${insightsData?.overallSentiment?.score > 7 ? 'text-green-500' : 'text-slate-400'}`}>
+                      {insightsData?.overallSentiment?.setup || 'NEUTRAL SETUP'}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="oss-gauge-container">
+                  <div className="oss-gauge-labels">
+                    <span>BEARISH</span>
+                    <span>NEUTRAL</span>
+                    <span>BULLISH</span>
+                  </div>
+                  <div className="oss-gauge-track">
+                    <div className="oss-gauge-marker" style={{ left: `${insightsData?.overallSentiment?.value || 50}%` }}></div>
+                  </div>
+                </div>
+                
+                <div className="oss-footer-insight">
+                  <div className="oss-sparkle-icon">✨</div>
+                  <p className="oss-insight-text">
+                    {insightsData?.overallSentiment?.insight || 'No significant momentum patterns detected for the current selection.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* 1. Timeframe Selector */}
+              <div className="signal-timeframe-toggles mb-10">
+                <div className="st-toggle-row">
+                  {[
+                    { id: 'short', label: 'Short Term', range: '1D - 5D' },
+                    { id: 'medium', label: 'Medium Term', range: '1M - 3M' },
+                    { id: 'long', label: 'Long Term', range: '1Y - 5Y' }
+                  ].map(tf => (
+                    <button 
+                      key={tf.id}
+                      className={`st-toggle-btn ${term === tf.id ? 'active' : ''}`}
+                      onClick={() => setTerm(tf.id)}
+                    >
+                      <span className="st-btn-label">{tf.label}</span>
+                      <span className="st-btn-range">{tf.range}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="insights-active-view">
+                {insightsLoading && !insightsData ? (
+                  <div className="insights-skeleton-grid">
+                    {[1,2,3,4,5,6].map(i => <div key={i} className="skeleton-card-pulse h-[200px] rounded-2xl bg-slate-100 mb-6"></div>)}
+                  </div>
+                ) : (
+                  <>
+                    <div className="signals-grid-main mb-8">
+                      {/* Trend Signals */}
+                      <div className="sig-category-card">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <TrendingUp className="rc-icon" />
+                            <h3>Trend Signals</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.trendSignals}</div>
+                          </div>
+                        </div>
+                        <div className="sig-list">
+                          {(insightsData?.trendSignals?.items || []).map((s, i) => (
+                            <div key={i} className="sig-item-card">
+                              <div className="sig-item-top">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="sig-name">{s.name}</span>
+                                  <div className="info-trigger-s">
+                                    <HelpCircle size={10} className="text-slate-200" />
+                                    <div className="ft-dropdown-s"><strong>{s.name}:</strong> {INSIGHTS_TOOLTIPS.indicatorDetail}</div>
+                                  </div>
+                                </div>
+                                <span className="sig-val">{s.val}</span>
+                                <span className={`sig-badge tag-${s.s}`}>{s.status}</span>
+                              </div>
+                              <p className="sig-interpretation">{s.imp}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="card-horizon-label">Based on {term.charAt(0).toUpperCase() + term.slice(1)} Term data</div>
+                      </div>
+
+                      {/* Momentum Signals */}
+                      <div className="sig-category-card">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <Zap className="rc-icon" />
+                            <h3>Momentum Signals</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.momentumSignals}</div>
+                          </div>
+                        </div>
+                        <div className="sig-list">
+                          {(insightsData?.momentumSignals?.items || []).map((s, i) => (
+                            <div key={i} className="sig-item-card">
+                              <div className="sig-item-top">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="sig-name">{s.name}</span>
+                                  <div className="info-trigger-s">
+                                    <HelpCircle size={10} className="text-slate-200" />
+                                    <div className="ft-dropdown-s"><strong>{s.name}:</strong> {INSIGHTS_TOOLTIPS.indicatorDetail}</div>
+                                  </div>
+                                </div>
+                                <span className="sig-val">{s.val}</span>
+                                <span className={`sig-badge tag-${s.s}`}>{s.status}</span>
+                              </div>
+                              <p className="sig-interpretation">{s.imp}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="card-horizon-label">Based on {term.charAt(0).toUpperCase() + term.slice(1)} Term data</div>
+                      </div>
+
+                      {/* Volatility & Risk */}
+                      <div className="sig-category-card">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <Activity className="rc-icon" />
+                            <h3>Volatility & Risk</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.volatilityRisk}</div>
+                          </div>
+                        </div>
+                        <div className="sig-list">
+                          {(insightsData?.volatilityRisk?.items || []).map((s, i) => (
+                            <div key={i} className="sig-item-card">
+                              <div className="sig-item-top">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="sig-name">{s.name}</span>
+                                  <div className="info-trigger-s">
+                                    <HelpCircle size={10} className="text-slate-200" />
+                                    <div className="ft-dropdown-s"><strong>{s.name}:</strong> {INSIGHTS_TOOLTIPS.indicatorDetail}</div>
+                                  </div>
+                                </div>
+                                <span className="sig-val">{s.val}</span>
+                                <span className={`sig-badge tag-${s.s}`}>{s.status}</span>
+                              </div>
+                              <p className="sig-interpretation">{s.imp}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="card-horizon-label">Based on {term.charAt(0).toUpperCase() + term.slice(1)} Term data</div>
+                      </div>
+                    </div>
+
+                    <div className="signals-row-flex mb-8">
+                      {/* Key Price Levels */}
+                      <div className="sig-card-mid flex-equal">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <BarChart3 className="rc-icon" />
+                            <h3>Key Price Levels</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.keyLevels}</div>
+                          </div>
+                        </div>
+                        <div className="kl-visual-range">
+                          <div className="kl-track">
+                            <div className="kl-marker kl-s2" style={{ left: insightsData?.keyLevels?.s2?.pos || '10%' }}><span>{insightsData?.keyLevels?.s2?.label || 'S2'}</span></div>
+                            <div className="kl-marker kl-s1" style={{ left: insightsData?.keyLevels?.s1?.pos || '30%' }}><span>{insightsData?.keyLevels?.s1?.label || 'S1'}</span></div>
+                            <div className="kl-current-thumb" style={{ left: insightsData?.keyLevels?.current?.pos || '72%' }}>
+                              <div className="kl-p-label">{insightsData?.keyLevels?.current?.val || '0.00'}</div>
+                              <div className="kl-p-dot"></div>
+                            </div>
+                            <div className="kl-marker kl-r1" style={{ left: insightsData?.keyLevels?.r1?.pos || '85%' }}><span>{insightsData?.keyLevels?.r1?.label || 'R1'}</span></div>
+                            <div className="kl-marker kl-r2" style={{ left: insightsData?.keyLevels?.r2?.pos || '95%' }}><span>{insightsData?.keyLevels?.r2?.label || 'R2'}</span></div>
+                          </div>
+                        </div>
+                        <div className="kl-interpretation-footer mt-4">
+                          <p className="text-xs text-slate-500 font-medium">{insightsData?.keyLevels?.interpretation}</p>
+                        </div>
+                      </div>
+
+                      {/* Volume Insights */}
+                      <div className="sig-card-mid flex-equal">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <Activity className="rc-icon" />
+                            <h3>Volume Insights</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.volumeInsights}</div>
+                          </div>
+                        </div>
+                        <div className="vi-metrics-row">
+                          <div className="vi-stat-box">
+                            <span className="vi-label">Volume vs Avg</span>
+                            <span className="vi-value">{insightsData?.volumeInsights?.volumeVsAvg} <small className={insightsData?.volumeInsights?.trendColor}>{insightsData?.volumeInsights?.trend}</small></span>
+                          </div>
+                          <div className="vi-stat-box">
+                            <span className="vi-label">Conviction</span>
+                            <span className={`vi-value ${insightsData?.volumeInsights?.convictionColor}`}>{insightsData?.volumeInsights?.conviction}</span>
+                          </div>
+                        </div>
+                        <div className="vi-note-box bg-slate-50 p-3 rounded-xl mt-4">
+                          <p className="text-xs leading-relaxed text-slate-600">{insightsData?.volumeInsights?.note}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="signals-row-flex mb-8">
+                      {/* Price Behavior */}
+                      <div className="sig-card-mid flex-equal">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <Sliders className="rc-icon" />
+                            <h3>Price Behavior</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.priceBehavior}</div>
+                          </div>
+                        </div>
+                        <ul className="pb-list">
+                          {(insightsData?.priceBehavior?.items || []).map((item, i) => (
+                            <li key={i}>
+                              <span className="pb-l">{item.label}</span>
+                              <span className={`pb-v ${item.color}`}>{item.val}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="text-[11px] text-slate-400 italic mt-3">"{insightsData?.priceBehavior?.note}"</p>
+                      </div>
+
+                      {/* Market Participation */}
+                      <div className="sig-card-mid flex-equal">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <ShieldCheck className="rc-icon" />
+                            <h3>Market Participation</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.marketParticipation}</div>
+                          </div>
+                        </div>
+                        <ul className="pb-list">
+                          {(insightsData?.marketParticipation?.items || []).map((item, i) => (
+                            <li key={i}>
+                              <span className="pb-l">{item.label}</span>
+                              <span className={`pb-v ${item.color}`}>{item.val}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="text-[11px] text-slate-400 italic mt-3">"{insightsData?.marketParticipation?.note}"</p>
+                      </div>
+                    </div>
+
+                    <div className="signals-row-flex mb-8">
+                      {/* Trend Alignment */}
+                      <div className="sig-card-mid flex-equal">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <ChevronsUpDown className="rc-icon" />
+                            <h3>Trend Alignment</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.trendAlignment}</div>
+                          </div>
+                        </div>
+                        <div className="ta-alignment-row">
+                          <div className="ta-pill-group">
+                            {['Short Term', 'Medium Term', 'Long Term'].map((t, i) => (
+                              <div key={i} className={`ta-pill ${insightsData?.trendAlignment?.pills?.[i] || 'bg-slate-200'}`}>{t}</div>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="ta-footer mt-4">
+                          <span className={`badge-light ${insightsData?.trendAlignment?.statusColor}`}>{insightsData?.trendAlignment?.status}</span>
+                          <p className="text-[12px] text-slate-500 mt-2">{insightsData?.trendAlignment?.note}</p>
+                        </div>
+                      </div>
+
+                      {/* Signal Consistency */}
+                      <div className="sig-card-mid flex-equal">
+                        <div className="sig-cat-header flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <Clock size={18} className="text-slate-500" />
+                            <h3>Signal Consistency</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.signalConsistency}</div>
+                          </div>
+                        </div>
+                        <div className="sc-consistency-view">
+                          <div className="sc-track">
+                            {(insightsData?.signalConsistency?.track || []).map((s, i) => (
+                              <div key={i} className={`sc-dot ${s === 1 ? 'bg-green' : s === 0.5 ? 'bg-amber' : 'bg-slate-200'}`}></div>
+                            ))}
+                          </div>
+                          <span className="sc-total">{insightsData?.signalConsistency?.score}% Bullish</span>
+                        </div>
+                        <p className="text-[12px] text-slate-500 mt-4">{insightsData?.signalConsistency?.note}</p>
+                      </div>
+                    </div>
+
+                    <div className="signals-row-flex mb-8">
+                      {/* Risk Alerts */}
+                      <div className="sig-card-mid risk-alerts-card flex-grow-side">
+                        <div className="rc-header">
+                          <div className="rc-header-left">
+                            <AlertCircle className="rc-icon" />
+                            <h3>Risk Alerts</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.riskAlerts}</div>
+                          </div>
+                        </div>
+                        <div className="risk-alerts-list">
+                          {(insightsData?.riskAlerts || []).map((ra, idx) => (
+                            <div key={idx} className={`ra-item alert-${ra.type}`}>
+                              <div className="ra-dot"></div>
+                              <p><strong>{ra.label}:</strong> {ra.desc}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Recent Changes */}
+                      <div className="sig-card-mid flex-grow-main">
+                        <div className="sig-cat-header flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <Clock size={18} className="text-indigo-500" />
+                            <h3>Recent Changes</h3>
+                          </div>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={15} className="text-slate-300" />
+                            <div className="ft-dropdown-s">{INSIGHTS_TOOLTIPS.recentChanges}</div>
+                          </div>
+                        </div>
+                        <div className="recent-changes-list">
+                          {(insightsData?.recentChanges || []).map((rc, idx) => (
+                            <div key={idx} className="rc-item-s">
+                              <span className="rc-time-s">{rc.time}</span>
+                              <p className="rc-desc-s" dangerouslySetInnerHTML={{ __html: rc.desc }}></p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </div>
             </div>
           )}
@@ -955,6 +1537,13 @@ const InvestorStockPage = () => {
                   <div className="ft-title-group">
                     <Activity size={20} className="text-blue-600" />
                     <h2>Company Fundamentals</h2>
+<<<<<<< HEAD
+=======
+                    <div className="info-trigger-s ml-2">
+                      <HelpCircle size={15} className="text-slate-300" />
+                      <div className="ft-dropdown-s">{FUNDAMENTALS_TOOLTIPS.companyFundamentals}</div>
+                    </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   </div>
                   <span className="ft-sub-text">All figures in â‚¹ Cr unless specified</span>
                 </div>
@@ -1029,14 +1618,33 @@ const InvestorStockPage = () => {
                 <div className="ft-title-row">
                   <TrendingUp size={20} className="text-blue-500" />
                   <h2>Detailed Analysis</h2>
+<<<<<<< HEAD
+=======
+                  <div className="info-trigger-s ml-2">
+                    <HelpCircle size={15} className="text-slate-300" />
+                    <div className="ft-dropdown-s">{FUNDAMENTALS_TOOLTIPS.detailedAnalysis}</div>
+                  </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                 </div>
                 <p>Granular breakdown of financial metrics and competitive standing.</p>
               </div>
 
               <div className="ft-detailed-layout-grid">
+<<<<<<< HEAD
                 {}
                 <div className="ft-analysis-card">
                   <div className="fac-header">Valuation Metrics</div>
+=======
+                {/* Valuation Metrics */}
+                <div className="ft-analysis-card">
+                  <div className="fac-header flex items-center gap-2">
+                    <span>Valuation Metrics</span>
+                    <div className="info-trigger-s">
+                      <HelpCircle size={13} className="text-slate-300" />
+                      <div className="ft-dropdown-s">{FUNDAMENTALS_TOOLTIPS.valuationMetrics}</div>
+                    </div>
+                  </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   <div className="fac-list">
                     {[
                       { n: 'P/E (TTM)', v: '9.21', label: 'Undervalued', t: 'green', sub: 'Below Industry Average' },
@@ -1046,7 +1654,17 @@ const InvestorStockPage = () => {
                     ].map((m, i) => (
                       <div key={i} className="fac-item">
                         <div className="fac-left">
+<<<<<<< HEAD
                           <span className="fac-n">{m.n}</span>
+=======
+                          <div className="flex items-center gap-1.5">
+                            <span className="fac-n">{m.n}</span>
+                            <div className="info-trigger-s">
+                              <HelpCircle size={10} className="text-slate-200" />
+                              <div className="ft-dropdown-s"><strong>{m.n}:</strong> {METRIC_DESCRIPTIONS[m.n]}</div>
+                            </div>
+                          </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                           <span className="fac-sub">{m.sub}</span>
                         </div>
                         <div className="fac-right">
@@ -1058,9 +1676,21 @@ const InvestorStockPage = () => {
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 {}
                 <div className="ft-analysis-card">
                   <div className="fac-header">Profitability</div>
+=======
+                {/* Profitability */}
+                <div className="ft-analysis-card">
+                  <div className="fac-header flex items-center gap-2">
+                    <span>Profitability</span>
+                    <div className="info-trigger-s">
+                      <HelpCircle size={13} className="text-slate-300" />
+                      <div className="ft-dropdown-s"><strong>Profitability:</strong> {METRIC_DESCRIPTIONS['Profitability']}</div>
+                    </div>
+                  </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   <div className="fac-list">
                     {[
                       { n: 'ROE', v: '14.7%', label: 'Strong', t: 'green', sub: 'Efficient equity usage' },
@@ -1070,7 +1700,17 @@ const InvestorStockPage = () => {
                     ].map((m, i) => (
                       <div key={i} className="fac-item">
                         <div className="fac-left">
+<<<<<<< HEAD
                           <span className="fac-n">{m.n}</span>
+=======
+                          <div className="flex items-center gap-1.5">
+                            <span className="fac-n">{m.n}</span>
+                            <div className="info-trigger-s">
+                              <HelpCircle size={10} className="text-slate-200" />
+                              <div className="ft-dropdown-s"><strong>{m.n}:</strong> {METRIC_DESCRIPTIONS[m.n]}</div>
+                            </div>
+                          </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                           <span className="fac-sub">{m.sub}</span>
                         </div>
                         <div className="fac-right">
@@ -1082,9 +1722,21 @@ const InvestorStockPage = () => {
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 {}
                 <div className="ft-analysis-card">
                   <div className="fac-header">Growth Profile</div>
+=======
+                {/* Growth Profile */}
+                <div className="ft-analysis-card">
+                  <div className="fac-header flex items-center gap-2">
+                    <span>Growth Profile</span>
+                    <div className="info-trigger-s">
+                      <HelpCircle size={13} className="text-slate-300" />
+                      <div className="ft-dropdown-s"><strong>Growth:</strong> {METRIC_DESCRIPTIONS['Growth Profile']}</div>
+                    </div>
+                  </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   <div className="fac-list">
                     {[
                       { n: 'Rev Growth (3Y)', v: '12.4%', label: 'Stable', t: 'green', sub: 'YoY Revenue CAGR' },
@@ -1093,7 +1745,17 @@ const InvestorStockPage = () => {
                     ].map((m, i) => (
                       <div key={i} className="fac-item">
                         <div className="fac-left">
+<<<<<<< HEAD
                           <span className="fac-n">{m.n}</span>
+=======
+                          <div className="flex items-center gap-1.5">
+                            <span className="fac-n">{m.n}</span>
+                            <div className="info-trigger-s">
+                              <HelpCircle size={10} className="text-slate-200" />
+                              <div className="ft-dropdown-s"><strong>{m.n}:</strong> {METRIC_DESCRIPTIONS[m.n]}</div>
+                            </div>
+                          </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                           <span className="fac-sub">{m.sub}</span>
                         </div>
                         <div className="fac-right">
@@ -1105,9 +1767,21 @@ const InvestorStockPage = () => {
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 {}
                 <div className="ft-analysis-card">
                   <div className="fac-header">Financial Health</div>
+=======
+                {/* Financial Health */}
+                <div className="ft-analysis-card">
+                  <div className="fac-header flex items-center gap-2">
+                    <span>Financial Health</span>
+                    <div className="info-trigger-s">
+                      <HelpCircle size={13} className="text-slate-300" />
+                      <div className="ft-dropdown-s"><strong>Health:</strong> {METRIC_DESCRIPTIONS['Financial Health']}</div>
+                    </div>
+                  </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   <div className="fac-list">
                     {[
                       { n: 'Debt to Equity', v: '0.12', label: 'Very Low', t: 'green', sub: 'Prudent debt management' },
@@ -1116,7 +1790,17 @@ const InvestorStockPage = () => {
                     ].map((m, i) => (
                       <div key={i} className="fac-item">
                         <div className="fac-left">
+<<<<<<< HEAD
                           <span className="fac-n">{m.n}</span>
+=======
+                          <div className="flex items-center gap-1.5">
+                            <span className="fac-n">{m.n}</span>
+                            <div className="info-trigger-s">
+                              <HelpCircle size={10} className="text-slate-200" />
+                              <div className="ft-dropdown-s"><strong>{m.n}:</strong> {METRIC_DESCRIPTIONS[m.n]}</div>
+                            </div>
+                          </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                           <span className="fac-sub">{m.sub}</span>
                         </div>
                         <div className="fac-right">
@@ -1128,9 +1812,21 @@ const InvestorStockPage = () => {
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 {}
                 <div className="ft-analysis-card">
                   <div className="fac-header">Shareholder Metrics</div>
+=======
+                {/* Shareholder Metrics */}
+                <div className="ft-analysis-card">
+                  <div className="fac-header d-flex items-center gap-2">
+                    <span>Shareholder Metrics</span>
+                    <div className="info-trigger-s">
+                      <HelpCircle size={13} className="text-slate-300" />
+                      <div className="ft-dropdown-s"><strong>Shareholders:</strong> {METRIC_DESCRIPTIONS['Shareholder Metrics']}</div>
+                    </div>
+                  </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   <div className="fac-list">
                     {[
                       { n: 'EPS (TTM)', v: '54.20', label: 'Rising', t: 'green', sub: 'Last 12 month earnings' },
@@ -1139,7 +1835,17 @@ const InvestorStockPage = () => {
                     ].map((m, i) => (
                       <div key={i} className="fac-item">
                         <div className="fac-left">
+<<<<<<< HEAD
                           <span className="fac-n">{m.n}</span>
+=======
+                          <div className="flex items-center gap-1.5">
+                            <span className="fac-n">{m.n}</span>
+                            <div className="info-trigger-s">
+                              <HelpCircle size={10} className="text-slate-200" />
+                              <div className="ft-dropdown-s"><strong>{m.n}:</strong> {METRIC_DESCRIPTIONS[m.n]}</div>
+                            </div>
+                          </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                           <span className="fac-sub">{m.sub}</span>
                         </div>
                         <div className="fac-right">
@@ -1151,10 +1857,24 @@ const InvestorStockPage = () => {
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 {}
                 <div className="ft-analysis-card ft-peer-card">
                   <div className="fac-header d-flex justify-between">
                     <span>Peer Comparison</span>
+=======
+
+                {/* Peer Comparison */}
+                <div className="ft-analysis-card ft-peer-card">
+                  <div className="fac-header flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span>Peer Comparison</span>
+                      <div className="info-trigger-s">
+                        <HelpCircle size={13} className="text-slate-300" />
+                        <div className="ft-dropdown-s">{FUNDAMENTALS_TOOLTIPS.peerComparison}</div>
+                      </div>
+                    </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                     <span className="text-xs font-normal text-slate-400">Industry: Energy Services</span>
                   </div>
                   <div className="peer-comp-table">
@@ -1170,7 +1890,17 @@ const InvestorStockPage = () => {
                       { n: 'Rev Growth', c: '12.4%', i: '9.5%', t: 'green', d: 'up' },
                     ].map((m, idx) => (
                       <div key={idx} className="pct-row">
+<<<<<<< HEAD
                         <span className="pct-n">{m.n}</span>
+=======
+                        <div className="flex items-center gap-2">
+                          <span className="pct-n">{m.n}</span>
+                          <div className="info-trigger-s">
+                            <HelpCircle size={10} className="text-slate-200" />
+                            <div className="ft-dropdown-s"><strong>{m.n}:</strong> {METRIC_DESCRIPTIONS[m.n]}</div>
+                          </div>
+                        </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                         <div className="pct-c-cell">
                           <span className="pct-val">{m.c}</span>
                           <div className={`pct-indicator text-${m.t}`}>
@@ -1187,6 +1917,10 @@ const InvestorStockPage = () => {
                     </p>
                   </div>
                 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </div>
             </div>
           )}
@@ -1229,13 +1963,24 @@ const InvestorStockPage = () => {
                   <div className="ne-section-header">
                     <Clock size={18} className="text-indigo-500" />
                     <h3>Upcoming Events</h3>
+<<<<<<< HEAD
+=======
+                    <div className="info-trigger-s ml-2">
+                      <HelpCircle size={15} className="text-slate-300" />
+                      <div className="ft-dropdown-s">{NEWS_TOOLTIPS.upcomingEvents}</div>
+                    </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   </div>
 
                   <div className="ne-timeline-container shadow-premium">
                     {[
                       { date: '12 May', title: 'Q4 Earnings Release', desc: 'Financial results for the quarter ended March 2024.', tag: 'QUARTERLY RESULTS', icon: 'bar', imp: 'Strong growth expected', s: 'green' },
                       { date: '28 May', title: 'Annual General Meeting', desc: 'Strategic roadmap and expansion plans discussion.', tag: 'AGM', icon: 'users', imp: 'Neutral impact on stock', s: 'amber' },
+<<<<<<< HEAD
                       { date: '04 Jun', title: 'Dividend Payout', desc: 'Final dividend of â‚¹2.50 per share proposed.', tag: 'DIVIDEND', icon: 'coin', imp: 'Positive for shareholders', s: 'green' },
+=======
+                      { date: '04 Jun', title: 'Dividend Payout', desc: 'Final dividend of Ã¢â€šÂ¹2.50 per share proposed.', tag: 'DIVIDEND', icon: 'coin', imp: 'Positive for shareholders', s: 'green' },
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                     ].map((e, idx) => (
                       <div key={idx} className="ne-timeline-item">
                         <div className="ne-t-left">
@@ -1270,11 +2015,22 @@ const InvestorStockPage = () => {
                   <div className="ne-section-header">
                     <TrendingUp size={18} className="text-blue-500" />
                     <h3>Latest News</h3>
+<<<<<<< HEAD
+=======
+                    <div className="info-trigger-s ml-2">
+                      <HelpCircle size={15} className="text-slate-300" />
+                      <div className="ft-dropdown-s">{NEWS_TOOLTIPS.latestNews}</div>
+                    </div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                   </div>
 
                   <div className="ne-news-stack">
                     {[
+<<<<<<< HEAD
                       { source: 'Reuters', time: '2h ago', head: 'Jindal Drilling bags new offshore contract worth â‚¹450Cr', desc: 'The contract involves deployment of the jack-up rig "Jindal Pioneer" for a period of 3 years.', imp: 'Positive for long-term growth', s: 'green' },
+=======
+                      { source: 'Reuters', time: '2h ago', head: 'Jindal Drilling bags new offshore contract worth Ã¢â€šÂ¹450Cr', desc: 'The contract involves deployment of the jack-up rig "Jindal Pioneer" for a period of 3 years.', imp: 'Positive for long-term growth', s: 'green' },
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                       { source: 'Economic Times', time: '5h ago', head: 'Energy service sector awaits policy clarity on offshore taxes', desc: 'Industry leaders seek rationalization of GST on offshore drilling services in upcoming budget.', imp: 'Short-term volatility expected', s: 'amber' },
                       { source: 'Mint', time: 'Yesterday', head: 'JDIL shares surge 15% on strong volume breakout', desc: 'Technicals suggest strong accumulation by mid-cap focused funds.', imp: 'Momentum expected to continue', s: 'green' },
                     ].map((n, idx) => (

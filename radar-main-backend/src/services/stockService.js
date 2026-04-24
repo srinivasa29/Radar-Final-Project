@@ -137,6 +137,31 @@ const fallbackStockMeta = {
     UNH: { name: 'UnitedHealth Group Incorporated', sector: 'Healthcare', peRatio: 21.1, dividendYield: 1.57 },
     WMT: { name: 'Walmart Inc.', sector: 'Consumer Defensive', peRatio: 31.8, dividendYield: 1.31 },
     BA: { name: 'The Boeing Company', sector: 'Industrials', peRatio: null, dividendYield: 0 },
+<<<<<<< HEAD
+=======
+    JINDRILL: { 
+        name: 'Jindal Drilling & Industries Ltd', 
+        sector: 'Energy', 
+        peRatio: 9.21, 
+        dividendYield: 0.85,
+        details: {
+            market_cap: '₹1,708 Cr',
+            debt_to_equity: 0.12,
+            pb_ratio: 1.45,
+            ev_ebitda: 6.80,
+            peg_ratio: 0.92,
+            roe: '14.7%',
+            roce: '18.2%',
+            int_coverage: 14.2,
+            current_ratio: 2.45,
+            rev_growth: '12.4%',
+            profit_growth: '8.9%',
+            eps: 54.20,
+            book_value: 388.15,
+            face_value: 10.00
+        }
+    },
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 };
 
 const fallbackPriceMap = {
@@ -164,6 +189,10 @@ const fallbackPriceMap = {
     UNH: 521.7,
     WMT: 68.3,
     BA: 177.9,
+<<<<<<< HEAD
+=======
+    JINDRILL: 562.9,
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 };
 
 const buildFallbackQuotes = (symbols) => symbols.map((symbol, index) => {

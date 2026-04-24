@@ -132,7 +132,11 @@ export const EnhancedScreenerResults = ({
                 <div className="text-sm text-slate-300 max-w-[200px] truncate">{stock.name}</div>
               </td>
               <td className="px-4 py-3">
+<<<<<<< HEAD
                 <div className="font-semibold text-white">₹{stock.price?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+=======
+                <div className="font-semibold text-white">â‚¹{stock.price?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </td>
               <td className="px-4 py-3">
                 <div className={`flex items-center gap-1 ${stock.change >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>

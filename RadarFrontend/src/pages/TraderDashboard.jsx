@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import { Activity, Maximize2, TrendingDown, TrendingUp, Search, Newspaper, Globe, Zap, ExternalLink, Monitor, HelpCircle, MessageCircle, Phone, Mail } from "lucide-react";
+=======
+import { Activity, Maximize2, TrendingDown, TrendingUp, Search, Newspaper, Globe, Zap, ExternalLink, Monitor } from "lucide-react";
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 import { motion } from "framer-motion";
 import {
   ResponsiveContainer,
@@ -181,9 +185,15 @@ const FALLBACK_SUMMARY = {
 };
 
 const getBiasMeta = (bias) => {
+<<<<<<< HEAD
   if (bias === "bullish") return { label: "Bullish", color: "#42C0A5", symbol: "↑" };
   if (bias === "bearish") return { label: "Bearish", color: "#ed5750", symbol: "↓" };
   return { label: "Neutral", color: "#8b909a", symbol: "→" };
+=======
+  if (bias === "bullish") return { label: "Bullish", color: "#42C0A5", symbol: "â†‘" };
+  if (bias === "bearish") return { label: "Bearish", color: "#ed5750", symbol: "â†“" };
+  return { label: "Neutral", color: "#8b909a", symbol: "â†’" };
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 };
 
 const getImpactColor = (impact) => {
@@ -480,7 +490,11 @@ const SectorHeatmap = () => {
           <h3 className="tr-card-title">Sector Heatmap</h3>
         </div>
         <span className={`tr-pill ${isLoading ? "text-amber-400 bg-amber-400/10" : "text-[#42C0A5] bg-[#42C0A5]/10"}`}>
+<<<<<<< HEAD
           {isLoading ? "● SYNCING" : "● LIVE"}
+=======
+          {isLoading ? "â— SYNCING" : "â— LIVE"}
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         </span>
       </div>
       <div className="flex-1 p-3 grid grid-cols-3 gap-2">
@@ -649,9 +663,15 @@ const TrendStrengthPanel = () => {
   const marketBiasColor = marketBias === "Bullish" ? "#42C0A5" : marketBias === "Bearish" ? "#ed5750" : "#8b909a";
 
   const stateToGlyph = {
+<<<<<<< HEAD
     bullish: "↑",
     bearish: "↓",
     neutral: "→",
+=======
+    bullish: "â†‘",
+    bearish: "â†“",
+    neutral: "â†’",
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     unknown: "-",
   };
 
@@ -670,7 +690,11 @@ const TrendStrengthPanel = () => {
         {hasError ? (
           <span className="tr-pill text-[#f0b429] bg-[#f0b429]/10">OFFLINE</span>
         ) : matrixRows.length > 0 ? (
+<<<<<<< HEAD
           <span className="tr-pill text-[#42C0A5] bg-[#42C0A5]/10">● LIVE</span>
+=======
+          <span className="tr-pill text-[#42C0A5] bg-[#42C0A5]/10">â— LIVE</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         ) : (
           <span className="tr-pill text-[#8b909a] bg-white/5">NO DATA</span>
         )}
@@ -752,6 +776,7 @@ const TrendStrengthPanel = () => {
       <div className="px-2.5 py-1.5 border-t border-white/10 flex items-center justify-between" style={{ background: "rgba(255,255,255,0.03)" }}>
         <div className="flex items-center gap-2 text-[9px]">
           <div className="flex items-center gap-1">
+<<<<<<< HEAD
             <span className="w-4 h-4 rounded-full inline-flex items-center justify-center text-[9px] font-bold" style={{ background: "rgba(61,178,107,0.2)", color: "#42C0A5" }}>↑</span>
             <span className="text-[#5d606b]">Bullish</span>
           </div>
@@ -761,6 +786,17 @@ const TrendStrengthPanel = () => {
           </div>
           <div className="flex items-center gap-1">
             <span className="w-4 h-4 rounded-full inline-flex items-center justify-center text-[9px] font-bold" style={{ background: "rgba(255,255,255,0.08)", color: "#8b909a" }}>→</span>
+=======
+            <span className="w-4 h-4 rounded-full inline-flex items-center justify-center text-[9px] font-bold" style={{ background: "rgba(61,178,107,0.2)", color: "#42C0A5" }}>â†‘</span>
+            <span className="text-[#5d606b]">Bullish</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="w-4 h-4 rounded-full inline-flex items-center justify-center text-[9px] font-bold" style={{ background: "rgba(237,87,80,0.2)", color: "#ed5750" }}>â†“</span>
+            <span className="text-[#5d606b]">Bearish</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="w-4 h-4 rounded-full inline-flex items-center justify-center text-[9px] font-bold" style={{ background: "rgba(255,255,255,0.08)", color: "#8b909a" }}>â†’</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             <span className="text-[#5d606b]">Neutral</span>
           </div>
         </div>
@@ -828,7 +864,11 @@ const GapLists = () => {
               <div className="w-1.5 h-6 rounded-full" style={{ background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
               <div>
                 <div className="font-bold text-white text-xs tracking-wide">{normalizeDisplaySymbol(item.symbol)}</div>
+<<<<<<< HEAD
                 <div className="text-[10px] font-mono" style={{ color: "#5d6b7a" }}>₹{Number(item.price || 0).toLocaleString()}</div>
+=======
+                <div className="text-[10px] font-mono" style={{ color: "#5d6b7a" }}>â‚¹{Number(item.price || 0).toLocaleString()}</div>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </div>
             </div>
             <span className="font-mono text-sm font-black px-2 py-0.5 rounded-md" style={{ color: accentColor, background: `${accentColor}15` }}>
@@ -1561,7 +1601,11 @@ const SignalEnginePanel = () => {
         {isFallback ? (
           <span className="tr-pill text-[#f0b429] bg-[#f0b429]/10">FALLBACK</span>
         ) : (
+<<<<<<< HEAD
           <span className="tr-pill text-[#42C0A5] bg-[#42C0A5]/10">● LIVE</span>
+=======
+          <span className="tr-pill text-[#42C0A5] bg-[#42C0A5]/10">â— LIVE</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         )}
       </div>
     </div>
@@ -1717,7 +1761,11 @@ const CatalystPanel = () => {
           item?.actual && item.actual !== "-" ? `Actual ${item.actual}` : null,
           item?.forecast && item.forecast !== "-" ? `Forecast ${item.forecast}` : null,
           item?.previous && item.previous !== "-" ? `Prev ${item.previous}` : null,
+<<<<<<< HEAD
         ].filter(Boolean).join(" · ");
+=======
+        ].filter(Boolean).join(" Â· ");
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         return (
         <div
           key={idx}
@@ -1731,7 +1779,11 @@ const CatalystPanel = () => {
           }}
         >
           <div className="flex items-start gap-2">
+<<<<<<< HEAD
             <span className="text-base mt-0.5 flex-shrink-0">{String(item.impact).toLowerCase().includes("high") ? "⚠️" : String(item.impact).toLowerCase().includes("med") ? "🕒" : "📌"}</span>
+=======
+            <span className="text-base mt-0.5 flex-shrink-0">{String(item.impact).toLowerCase().includes("high") ? "âš ï¸" : String(item.impact).toLowerCase().includes("med") ? "ðŸ•’" : "ðŸ“Œ"}</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-start gap-1">
                 <span className="text-[15px] text-white font-semibold leading-tight">{item.event}</span>
@@ -1749,12 +1801,20 @@ const CatalystPanel = () => {
                 <span className="text-[11px] font-mono text-[#7b8190]">{formatCalendarDate(item.date)}</span>
                 {metadata ? (
                   <>
+<<<<<<< HEAD
                     <span className="text-[#2a2e39]">·</span>
+=======
+                    <span className="text-[#2a2e39]">Â·</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                     <span className="text-[11px] text-[#7b8190]">{metadata}</span>
                   </>
                 ) : (
                   <>
+<<<<<<< HEAD
                     <span className="text-[#2a2e39]">·</span>
+=======
+                    <span className="text-[#2a2e39]">Â·</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                     <span className="text-[11px] text-[#7b8190]">Verified event schedule</span>
                   </>
                 )}
@@ -2063,11 +2123,19 @@ const FODashboard = () => {
   const callOi = contracts
     .filter((contract) => String(contract.type).toLowerCase().includes("call"))
     .map((contract) => contract.oi)
+<<<<<<< HEAD
     .join(" · ") || "--";
   const putOi = contracts
     .filter((contract) => String(contract.type).toLowerCase().includes("put"))
     .map((contract) => contract.oi)
     .join(" · ") || "--";
+=======
+    .join(" Â· ") || "--";
+  const putOi = contracts
+    .filter((contract) => String(contract.type).toLowerCase().includes("put"))
+    .map((contract) => contract.oi)
+    .join(" Â· ") || "--";
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
   const longCount = dashboard?.buildup?.long?.length || 0;
   const shortCount = dashboard?.buildup?.short?.length || 0;
   const normalizedPcr = Number.isFinite(pcr) ? Math.max(0, Math.min(100, Math.round(pcr * 50))) : 0;
@@ -2080,7 +2148,11 @@ const FODashboard = () => {
     <div className="tr-card-header">
       <h3 className="tr-card-title">F&O INSIGHTS</h3>
       <div className="flex gap-2 items-center">
+<<<<<<< HEAD
         <span className="tr-pill text-[#42C0A5] bg-[#42C0A5]/10">● CHAIN</span>
+=======
+        <span className="tr-pill text-[#42C0A5] bg-[#42C0A5]/10">â— CHAIN</span>
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
       </div>
     </div>
     <div className="grid grid-cols-2 gap-2 h-full p-2">
@@ -2482,7 +2554,11 @@ const NewsFlash = ({ variant = "full" }) => {
                   <div className="flex items-center gap-2 flex-wrap">
                     {isBreaking && (
                       <span className="rounded-full border border-red-500/25 bg-red-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-red-400">
+<<<<<<< HEAD
                         🔥 Breaking
+=======
+                        ðŸ”¥ Breaking
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
                       </span>
                     )}
                     {tag && (
@@ -2726,6 +2802,7 @@ const ResearchToolPanel = () => {
   );
 };
 
+<<<<<<< HEAD
 const HelpSupportView = () => {
   const faqs = [
     {
@@ -2819,6 +2896,8 @@ const HelpSupportView = () => {
   );
 };
 
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 function ResearchView({ activeModule, onRequestModuleChange }) {
   const navigate = useNavigate();
   const [expandedChart, setExpandedChart] = useState(null);
@@ -2917,10 +2996,13 @@ function ResearchView({ activeModule, onRequestModuleChange }) {
     );
   }
 
+<<<<<<< HEAD
   if (activeModule === "HELP_SUPPORT") {
     return <HelpSupportView />;
   }
 
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
   if (activeModule === "MULTI-CHART") {
     return (
       <div className="dashboard-layout flex flex-col w-full">
@@ -3118,13 +3200,21 @@ function ResearchView({ activeModule, onRequestModuleChange }) {
             <div className="chart-modal-panel">
             <div className="chart-modal-header">
               <div className="chart-modal-title">
+<<<<<<< HEAD
                 {expandedChart} — Full Screen
+=======
+                {expandedChart} â€” Full Screen
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </div>
               <button
                 className="chart-modal-close"
                 onClick={() => setExpandedChart(null)}
               >
+<<<<<<< HEAD
                 ✕ Close
+=======
+                âœ• Close
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
               </button>
             </div>
             <div className="chart-modal-body">

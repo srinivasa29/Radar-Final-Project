@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { createPortal } from "react-dom";
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Activity, TrendingUp, LogOut } from "lucide-react";
@@ -14,7 +17,10 @@ const ProfileDropdownPortal = ({
   const dropdownRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [mode, setMode] = useState("trader");
+<<<<<<< HEAD
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 
   useEffect(() => {
     const saved = localStorage.getItem("mode");
@@ -81,14 +87,20 @@ const ProfileDropdownPortal = ({
         avatarRef?.current &&
         !avatarRef.current.contains(e.target)
       ) {
+<<<<<<< HEAD
         setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         onClose();
       }
     };
 
     const handleEscape = (e) => {
       if (e.key === "Escape") {
+<<<<<<< HEAD
         setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
         onClose();
       }
     };
@@ -103,7 +115,10 @@ const ProfileDropdownPortal = ({
   }, [onClose, avatarRef]);
 
   const handleSelectMode = (nextMode) => {
+<<<<<<< HEAD
     setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     setMode(nextMode);
     if (nextMode === "investor") {
       navigate("/investor-dashboard");
@@ -113,7 +128,11 @@ const ProfileDropdownPortal = ({
     onClose();
   };
 
+<<<<<<< HEAD
   const content = (
+=======
+  return (
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
     <div
       ref={dropdownRef}
       className="fixed w-64 bg-white border border-blue-100 rounded-xl shadow-2xl py-2 z-[9999] animate-in fade-in slide-in-from-top-1"
@@ -135,7 +154,10 @@ const ProfileDropdownPortal = ({
           href="/profile" 
           onClick={(e) => {
             e.preventDefault();
+<<<<<<< HEAD
             setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             onClose();
             navigate("/profile");
           }} 
@@ -147,7 +169,10 @@ const ProfileDropdownPortal = ({
         <button
           type="button"
           onClick={() => {
+<<<<<<< HEAD
             setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             onClose();
             navigate("/settings");
           }}
@@ -159,7 +184,10 @@ const ProfileDropdownPortal = ({
         <button
           type="button"
           onClick={() => {
+<<<<<<< HEAD
             setShowSignOutConfirm(false);
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             onClose();
             navigate("/support");
           }}
@@ -204,7 +232,15 @@ const ProfileDropdownPortal = ({
         {/* Sign Out */}
         <div className="mt-1">
           <button 
+<<<<<<< HEAD
             onClick={() => setShowSignOutConfirm(true)}
+=======
+            onClick={() => {
+              onClose();
+              localStorage.clear();
+              navigate("/login");
+            }} 
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
             className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-rose-600 hover:bg-rose-50/50 transition-colors"
           >
             <LogOut size={16} /> Sign Out
@@ -213,6 +249,7 @@ const ProfileDropdownPortal = ({
       </div>
     </div>
   );
+<<<<<<< HEAD
 
   const confirmOverlay = (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#0B0E14]/90 backdrop-blur-sm p-4">
@@ -260,6 +297,8 @@ const ProfileDropdownPortal = ({
       {showSignOutConfirm ? createPortal(confirmOverlay, document.body) : null}
     </>
   );
+=======
+>>>>>>> d95aecbc30ebb22d746689c5bb35c7617c0c1627
 };
 
 export default ProfileDropdownPortal;
