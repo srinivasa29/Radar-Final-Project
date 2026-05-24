@@ -95,7 +95,36 @@ const saveCandlesToDB = async (symbol, interval, candles, source) => {
 
     if (!Array.isArray(candles) || candles.length === 0) return;
 
-    const timestamps = candles.map(c => new Date(c.time * 1000));
+    const getCandleDate = (c) => {
+        if (!c) return null;
+        let d = null;
+        if (c.timestamp) d = new Date(c.timestamp);
+        else if (c.datetime) d = new Date(c.datetime);
+        else if (c.date) d = new Date(c.date);
+        else if (c.time) {
+            if (c.time > 1000000000000) {
+                d = new Date(c.time);
+            } else {
+                d = new Date(c.time * 1000);
+            }
+        }
+        return (d && !isNaN(d.getTime())) ? d : null;
+    };
+
+    const validCandles = [];
+    for (const c of candles) {
+        const d = getCandleDate(c);
+        if (d && c.open != null && c.high != null && c.low != null && c.close != null) {
+            validCandles.push({ ...c, parsedDate: d });
+        }
+    }
+
+    if (validCandles.length === 0) {
+        logger.info(`[Candle Engine DB] No valid candles to save for ${cleanSym}`);
+        return;
+    }
+
+    const timestamps = validCandles.map(c => c.parsedDate);
     const minDate = new Date(Math.min(...timestamps.map(t => t.getTime())));
     const maxDate = new Date(Math.max(...timestamps.map(t => t.getTime())));
 
@@ -110,19 +139,19 @@ const saveCandlesToDB = async (symbol, interval, candles, source) => {
     const existingTimes = new Set(existingDocs.map(d => new Date(d.timestamp).getTime()));
 
     const newDocs = [];
-    for (const c of candles) {
-      const tMs = c.time * 1000;
+    for (const c of validCandles) {
+      const tMs = c.parsedDate.getTime();
       if (!existingTimes.has(tMs)) {
         newDocs.push({
-          timestamp: new Date(tMs),
+          timestamp: c.parsedDate,
           symbol: cleanSym,
           exchange,
           timeframe,
-          open: c.open,
-          high: c.high,
-          low: c.low,
-          close: c.close,
-          volume: c.volume || 0,
+          open: Number(c.open),
+          high: Number(c.high),
+          low: Number(c.low),
+          close: Number(c.close),
+          volume: Number(c.volume || 0),
           source
         });
       }

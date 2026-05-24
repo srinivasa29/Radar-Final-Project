@@ -1149,3 +1149,11 @@
 {"level":"error","message":"[stockService] candleEngine failed for NIFTY.NS: All candle aggregation providers failed for symbol: NIFTY.NS","service":"radar-backend","timestamp":"2026-05-24 19:04:58"}
 {"level":"error","message":"[stockService] candleEngine failed for NIFTY.NS: All candle aggregation providers failed for symbol: NIFTY.NS","service":"radar-backend","timestamp":"2026-05-24 19:04:59"}
 {"level":"error","message":"[stockService] candleEngine failed for NIFTY.NS: All candle aggregation providers failed for symbol: NIFTY.NS","service":"radar-backend","timestamp":"2026-05-24 19:04:59"}
+{"level":"error","message":"[Candle Engine] Provider alphavantage reached 3 consecutive failures. Cooldown activated for 1 minute.","service":"radar-backend","timestamp":"2026-05-25 04:41:53"}
+{"level":"error","message":"[Candle Engine] Provider alphavantage reached 3 consecutive failures. Cooldown activated for 1 minute.","service":"radar-backend","timestamp":"2026-05-25 04:42:00"}
+{"level":"error","message":"[Candle Engine] Provider alphavantage reached 3 consecutive failures. Cooldown activated for 1 minute.","service":"radar-backend","timestamp":"2026-05-25 04:46:34"}
+{"level":"error","message":"[Candle Engine] Provider alphavantage reached 3 consecutive failures. Cooldown activated for 1 minute.","service":"radar-backend","timestamp":"2026-05-25 04:46:42"}
+{"level":"error","message":"[Candle Engine] Provider alphavantage reached 3 consecutive failures. Cooldown activated for 1 minute.","service":"radar-backend","timestamp":"2026-05-25 04:48:56"}
+{"level":"error","message":"[Candle Engine] Provider alphavantage reached 3 consecutive failures. Cooldown activated for 1 minute.","service":"radar-backend","timestamp":"2026-05-25 04:48:57"}
+{"level":"error","message":"[Candle Engine] Provider alphavantage reached 3 consecutive failures. Cooldown activated for 1 minute.","service":"radar-backend","timestamp":"2026-05-25 04:50:13"}
+{"level":"error","message":"[Candle Engine] Provider alphavantage reached 3 consecutive failures. Cooldown activated for 1 minute.","service":"radar-backend","timestamp":"2026-05-25 04:50:14"}

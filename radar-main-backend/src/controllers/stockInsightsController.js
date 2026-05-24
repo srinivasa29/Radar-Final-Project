@@ -126,6 +126,43 @@ const getFundamentals = async (req, res) => {
 
         console.error('FUNDAMENTALS ERROR:', error);
 
+        try {
+            const fallbackSymbol = req.params.symbol || '';
+            console.log(`[Fundamentals Fallback] Trying stockInsightsService getStockFundamentals for ${fallbackSymbol}`);
+            const serviceFund = await getStockFundamentals(fallbackSymbol);
+            if (serviceFund && serviceFund.snapshot) {
+                const snap = serviceFund.snapshot;
+                const desc = serviceFund.description || {};
+                const fundamentals = {
+                    symbol: fallbackSymbol,
+                    marketCap: snap.marketCap,
+                    peRatio: snap.peRatio,
+                    eps: snap.eps || null,
+                    dividendYield: snap.dividendYield,
+                    beta: snap.beta,
+                    sector: snap.sector || null,
+                    industry: snap.industry || null,
+                    profitMargins: snap.profitMargins,
+                    operatingMargins: snap.operatingMargins,
+                    revenueGrowth: snap.revenueGrowth,
+                    bookValue: snap.bookValue || null,
+                    priceToBook: snap.pbRatio || null,
+                    fiftyTwoWeekHigh: snap.fiftyTwoWeekHigh,
+                    fiftyTwoWeekLow: snap.fiftyTwoWeekLow,
+                    financialPerformance: {
+                        quarterly: [],
+                        yearly: []
+                    }
+                };
+                return res.json({
+                    success: true,
+                    data: fundamentals
+                });
+            }
+        } catch (fallbackErr) {
+            console.error('[Fundamentals Fallback] Error in fallback:', fallbackErr.message);
+        }
+
         res.status(500).json({
             success: false,
             message: error.message,

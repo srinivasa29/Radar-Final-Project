@@ -1,8 +1,45 @@
+const axios = require('axios');
 const mapSymbol = require('../utils/symbolMapper');
 
 const YahooFinance = require('yahoo-finance2').default;
 
 const yahooFinance = new YahooFinance();
+
+const fetchDirectChart = async (sym, p1, p2, interval) => {
+    const response = await axios.get(`https://query1.finance.yahoo.com/v8/finance/chart/${sym}`, {
+        params: {
+            period1: Math.floor(p1.getTime() / 1000),
+            period2: Math.floor(p2.getTime() / 1000),
+            interval: interval
+        },
+        timeout: 8000,
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/json'
+        }
+    });
+
+    const chartResult = response.data?.chart?.result?.[0];
+    if (!chartResult) {
+        throw new Error(`Direct v8 chart endpoint returned no data for ${sym}`);
+    }
+
+    const timestamps = chartResult.timestamp || [];
+    const quote = chartResult.indicators?.quote?.[0] || {};
+    const adjclose = chartResult.indicators?.adjclose?.[0]?.adjclose || [];
+    
+    return {
+        quotes: timestamps.map((ts, idx) => ({
+            date: new Date(ts * 1000),
+            open: quote.open?.[idx],
+            high: quote.high?.[idx],
+            low: quote.low?.[idx],
+            close: quote.close?.[idx],
+            adjclose: adjclose?.[idx],
+            volume: quote.volume?.[idx]
+        }))
+    };
+};
 
 const getChartData = async (
     symbol,
@@ -51,10 +88,18 @@ const getChartData = async (
                     interval
                 });
             } catch (fallbackError) {
-                throw fallbackError;
+                try {
+                    result = await fetchDirectChart(symbol, p1, p2, interval);
+                } catch (directErr) {
+                    throw fallbackError;
+                }
             }
         } else {
-            throw error;
+            try {
+                result = await fetchDirectChart(yahooSymbol, p1, p2, interval);
+            } catch (directErr) {
+                throw error;
+            }
         }
     }
 

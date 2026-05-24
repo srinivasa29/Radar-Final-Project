@@ -218,7 +218,41 @@ class IncrementalUpdateService {
       }
 
       const cleanSym = symbol.toUpperCase().replace(/\.(NS|BO)$/i, '');
-      const timestamps = newData.map(c => new Date(c.timestamp || (c.time * 1000)));
+
+      const getCandleDate = (c) => {
+        if (!c) return null;
+        let d = null;
+        if (c.timestamp) d = new Date(c.timestamp);
+        else if (c.datetime) d = new Date(c.datetime);
+        else if (c.date) d = new Date(c.date);
+        else if (c.time) {
+            if (c.time > 1000000000000) {
+                d = new Date(c.time);
+            } else {
+                d = new Date(c.time * 1000);
+            }
+        }
+        return (d && !isNaN(d.getTime())) ? d : null;
+      };
+
+      const validCandles = [];
+      for (const c of newData) {
+        const d = getCandleDate(c);
+        if (d && c.open != null && c.high != null && c.low != null && c.close != null) {
+            validCandles.push({ ...c, parsedDate: d });
+        }
+      }
+
+      if (validCandles.length === 0) {
+        return {
+          symbol,
+          success: true,
+          newCandles: 0,
+          message: 'No valid new candles parsed',
+        };
+      }
+
+      const timestamps = validCandles.map(c => c.parsedDate);
       const minDate = new Date(Math.min(...timestamps.map(t => t.getTime())));
       const maxDate = new Date(Math.max(...timestamps.map(t => t.getTime())));
 
@@ -233,19 +267,19 @@ class IncrementalUpdateService {
       const existingTimes = new Set(existingDocs.map(d => new Date(d.timestamp).getTime()));
       const newDocs = [];
 
-      for (const c of newData) {
-        const ts = new Date(c.timestamp || (c.time * 1000));
-        if (!existingTimes.has(ts.getTime())) {
+      for (const c of validCandles) {
+        const tMs = c.parsedDate.getTime();
+        if (!existingTimes.has(tMs)) {
           newDocs.push({
-            timestamp: ts,
+            timestamp: c.parsedDate,
             symbol: cleanSym,
             exchange: 'NSE',
             timeframe,
-            open: c.open,
-            high: c.high,
-            low: c.low,
-            close: c.close,
-            volume: c.volume || 0,
+            open: Number(c.open),
+            high: Number(c.high),
+            low: Number(c.low),
+            close: Number(c.close),
+            volume: Number(c.volume || 0),
             source: 'yahoo',
           });
         }
@@ -262,7 +296,7 @@ class IncrementalUpdateService {
         symbol,
         success: true,
         newCandles: newDocs.length,
-        latestDate: newData[newData.length - 1].timestamp || new Date(newData[newData.length - 1].time * 1000).toISOString(),
+        latestDate: validCandles[validCandles.length - 1].parsedDate.toISOString(),
       };
     } catch (error) {
       logger.error(`Error updating symbol ${symbol}: ${error.message}`);

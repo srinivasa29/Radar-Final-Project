@@ -10,11 +10,52 @@ const getHistoricalData = async (req, res) => {
         const { symbol } = req.params;
         const { interval = '1d' } = req.query;
 
-        const result = await yahooFinance.chart(symbol, {
-            period1: '2025-01-01',
-            period2: new Date(),
-            interval: interval
-        });
+        let result;
+        try {
+            result = await yahooFinance.chart(symbol, {
+                period1: '2025-01-01',
+                period2: new Date(),
+                interval: interval
+            });
+        } catch (err) {
+            console.warn(`[ohlcController] yahooFinance.chart failed for ${symbol}, trying direct v8 chart endpoint fallback: ${err.message}`);
+            try {
+                const axios = require('axios');
+                const response = await axios.get(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`, {
+                    params: {
+                        period1: Math.floor(new Date('2025-01-01').getTime() / 1000),
+                        period2: Math.floor(new Date().getTime() / 1000),
+                        interval: interval
+                    },
+                    timeout: 8000,
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const chartResult = response.data?.chart?.result?.[0];
+                if (!chartResult) {
+                    throw new Error(`Direct v8 chart endpoint returned no data for ${symbol}`);
+                }
+
+                const timestamps = chartResult.timestamp || [];
+                const quote = chartResult.indicators?.quote?.[0] || {};
+                
+                result = {
+                    quotes: timestamps.map((ts, idx) => ({
+                        date: new Date(ts * 1000),
+                        open: quote.open?.[idx],
+                        high: quote.high?.[idx],
+                        low: quote.low?.[idx],
+                        close: quote.close?.[idx],
+                        volume: quote.volume?.[idx]
+                    }))
+                };
+            } catch (fallbackErr) {
+                throw new Error(`Yahoo Finance chart library and direct fallback both failed: ${fallbackErr.message}`);
+            }
+        }
 
         const candles =
             result?.quotes?.map(candle => ({
